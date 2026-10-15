@@ -1,0 +1,1626 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>English Mastery - 40 Topics</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        /* Tùy chỉnh thanh cuộn gọn gàng */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        .tab-active { border-bottom: 3px solid #2563eb; color: #1d4ed8; font-weight: 600; background-color: #eff6ff; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 h-screen flex flex-col overflow-hidden select-none">
+
+    <!-- HEADER: Gọn gàng + Menu Dropdown 40 Topics -->
+    <header class="bg-white border-b border-slate-200 px-4 py-2.5 shadow-sm z-10 shrink-0">
+        <div class="max-w-5xl mx-auto flex flex-wrap items-center justify-between gap-3">
+            <div class="flex items-center gap-2.5">
+                <span class="bg-blue-600 text-white font-bold px-2.5 py-1 rounded-lg text-sm tracking-wide">EN</span>
+                <h1 class="font-bold text-base sm:text-lg text-slate-800 truncate">Giao Tiếp Thực Chiến</h1>
+            </div>
+            
+            <div class="w-full sm:w-80">
+                <select id="topicSelect" onchange="loadTopic(this.value)" class="w-full bg-slate-50 border border-slate-300 text-slate-800 text-sm rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block p-2 font-medium outline-none cursor-pointer transition">
+                    <!-- Danh sách 40 Topic sẽ tự động nạp tại đây -->
+                </select>
+            </div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION TABS: Chuyển đổi 4 phần không làm trang trải dài -->
+    <nav class="bg-white border-b border-slate-200 shrink-0 shadow-xs">
+        <div class="max-w-5xl mx-auto flex">
+            <button onclick="switchTab('vocab')" id="tab-vocab" class="flex-1 py-3 text-xs sm:text-sm text-center text-slate-600 hover:bg-slate-50 transition tab-active">
+                1. Từ vựng
+            </button>
+            <button onclick="switchTab('grammar')" id="tab-grammar" class="flex-1 py-3 text-xs sm:text-sm text-center text-slate-600 hover:bg-slate-50 transition">
+                2. Ngữ pháp
+            </button>
+            <button onclick="switchTab('dialogue')" id="tab-dialogue" class="flex-1 py-3 text-xs sm:text-sm text-center text-slate-600 hover:bg-slate-50 transition">
+                3. Hội thoại
+            </button>
+            <button onclick="switchTab('practice')" id="tab-practice" class="flex-1 py-3 text-xs sm:text-sm text-center text-slate-600 hover:bg-slate-50 transition">
+                4. Bài tập
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT: Khung hiển thị tự co giãn & cuộn nội bộ -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-3 sm:p-5 overflow-hidden flex flex-col">
+        <div id="contentArea" class="bg-white rounded-xl shadow-sm border border-slate-200 flex-1 overflow-y-auto p-4 sm:p-6 select-text">
+            <!-- Nội dung từng phần sẽ hiển thị tại đây -->
+        </div>
+    </main>
+
+    <script>
+        // ============================================================================
+        // 📍 ĐIỂM DÁN TÀI LIỆU (DATA STORE CỦA 40 TOPICS)
+        // Khi có code của Topic mới (Topic 2, 3, 4...), bạn chỉ cần dán nối tiếp 
+        // vào bên dưới dấu phẩy của Topic trước đó ngay trong mảng TOPICS_DATA này!
+        // ============================================================================
+        const TOPICS_DATA = [
+            // --- BẮT ĐẦU TOPIC 1 ---
+            {
+                id: 1,
+                title: "Topic 1: Làm quen & Chào hỏi (Greetings & Introductions)",
+                vocab: [
+                    { word: "hello", ipa: "/həˈləʊ/", type: "interj", meaning: "xin chào" },
+                    { word: "morning", ipa: "/ˈmɔː.nɪŋ/", type: "n", meaning: "buổi sáng" },
+                    { word: "name", ipa: "/neɪm/", type: "n", meaning: "tên" },
+                    { word: "nice", ipa: "/naɪs/", type: "adj", meaning: "vui vẻ, tốt đẹp" },
+                    { word: "meet", ipa: "/miːt/", type: "v", meaning: "gặp gỡ" },
+                    { word: "where", ipa: "/weər/", type: "adv", meaning: "ở đâu" },
+                    { word: "from", ipa: "/frɒm/", type: "prep", meaning: "từ" },
+                    { word: "live", ipa: "/lɪv/", type: "v", meaning: "sống, sinh sống" },
+                    { word: "city", ipa: "/ˈsɪt.i/", type: "n", meaning: "thành phố" },
+                    { word: "what", ipa: "/wɒt/", type: "pron", meaning: "cái gì" },
+                    { word: "do", ipa: "/duː/", type: "v", meaning: "làm" },
+                    { word: "job", ipa: "/dʒɒb/", type: "n", meaning: "công việc" },
+                    { word: "office", ipa: "/ˈɒf.ɪs/", type: "n", meaning: "văn phòng" },
+                    { word: "worker", ipa: "/ˈwɜː.kər/", type: "n", meaning: "nhân viên, người lao động" },
+                    { word: "how about", ipa: "/haʊ əˈbaʊt/", type: "phrase", meaning: "còn ... thì sao" },
+                    { word: "software", ipa: "/ˈsɒft.weər/", type: "n", meaning: "phần mềm" },
+                    { word: "engineer", ipa: "/ˌen.dʒɪˈnɪər/", type: "n", meaning: "kỹ sư" },
+                    { word: "really", ipa: "/ˈrɪə.li/", type: "adv", meaning: "thật sự, rất" },
+                    { word: "interesting", ipa: "/ˈɪn.trə.stɪŋ/", type: "adj", meaning: "thú vị" },
+                    { word: "thank", ipa: "/θæŋk/", type: "v", meaning: "cảm ơn" },
+                    { word: "free time", ipa: "/friː taɪm/", type: "n", meaning: "thời gian rảnh" },
+                    { word: "usually", ipa: "/ˈjuː.ʒu.ə.li/", type: "adv", meaning: "thường xuyên" },
+                    { word: "read", ipa: "/riːd/", type: "v", meaning: "đọc" },
+                    { word: "book", ipa: "/bʊk/", type: "n", meaning: "cuốn sách" },
+                    { word: "drink", ipa: "/drɪŋk/", type: "v", meaning: "uống" },
+                    { word: "coffee", ipa: "/ˈkɒf.i/", type: "n", meaning: "cà phê" },
+                    { word: "too", ipa: "/tuː/", type: "adv", meaning: "cũng vậy" },
+                    { word: "have to", ipa: "/hæv tuː/", type: "modal", meaning: "phải (làm gì đó)" },
+                    { word: "go", ipa: "/ɡəʊ/", type: "v", meaning: "đi" },
+                    { word: "now", ipa: "/naʊ/", type: "adv", meaning: "bây giờ" },
+                    { word: "see", ipa: "/siː/", type: "v", meaning: "gặp, nhìn thấy" },
+                    { word: "later", ipa: "/ˈleɪ.tər/", type: "adv", meaning: "sau nhé, lát nữa" },
+                    { word: "have", ipa: "/hæv/", type: "v", meaning: "có, chúc" },
+                    { word: "great", ipa: "/ɡreɪt/", type: "adj", meaning: "tuyệt vời" },
+                    { word: "day", ipa: "/deɪ/", type: "n", meaning: "ngày" }
+                ],
+                grammar: [
+                    {
+                        title: "1. Thì Hiện Tại Đơn (Present Simple) - Với Động từ TO BE",
+                        usage: "Dùng để giới thiệu tên tuổi, quê quán, nghề nghiệp, tính chất hoặc trạng thái ở hiện tại.",
+                        formula: [
+                            "(+) S + am / is / are + N / Adj",
+                            "(-) S + am / is / are + not + N / Adj",
+                            "(?) (Wh-) + am / is / are + S + N / Adj?"
+                        ],
+                        note: "I + am | He/She/It/Danh từ số ít + is | You/We/They/Danh từ số nhiều + are",
+                        examples: [
+                            { en: "My name is Alex. I am an office worker.", vi: "Tên tôi là Alex. Tôi là một nhân viên văn phòng." },
+                            { en: "Where are you from?", vi: "Bạn đến từ đâu?" },
+                            { en: "That is a really interesting job!", vi: "Đó là một công việc thật sự thú vị!" }
+                        ]
+                    },
+                    {
+                        title: "2. Thì Hiện Tại Đơn (Present Simple) - Với Động từ Thường",
+                        usage: "Dùng để diễn tả thói quen hàng ngày, hành động lặp đi lặp lại hoặc sự thật hiển nhiên.",
+                        formula: [
+                            "(+) S + V(s/es) + O",
+                            "(-) S + do / does + not + V(nguyên mẫu) + O",
+                            "(?) (Wh-) + do / does + S + V(nguyên mẫu) + O?"
+                        ],
+                        note: "I/You/We/They + V(nguyên mẫu) (mượn trợ động từ DO) | He/She/It + V(s/es) (mượn trợ động từ DOES).",
+                        examples: [
+                            { en: "I live in Ho Chi Minh City.", vi: "Tôi sống ở Thành phố Hồ Chí Minh." },
+                            { en: "What do you do in your free time?", vi: "Bạn làm gì vào thời gian rảnh?" },
+                            { en: "I usually read books and drink coffee.", vi: "Tôi thường đọc sách và uống cà phê." }
+                        ]
+                    },
+                    {
+                        title: "3. Cấu trúc bắt buộc: Have to + V (Phải làm gì)",
+                        usage: "Diễn tả việc cần phải làm do hoàn cảnh khách quan.",
+                        formula: [
+                            "S + have to / has to + V(nguyên mẫu)"
+                        ],
+                        note: "Dùng phổ biến khi muốn xin phép rời đi lịch sự trong giao tiếp.",
+                        examples: [
+                            { en: "I have to go now. See you later!", vi: "Bây giờ tôi phải đi rồi. Hẹn gặp lại bạn sau nhé!" }
+                        ]
+                    }
+                ],
+                dialogue: [
+                    { speaker: "Alex", en: "Hello! Good morning.", vi: "Xin chào! Chào buổi sáng." },
+                    { speaker: "Minh", en: "Good morning! My name is Minh. What is your name?", vi: "Chào buổi sáng! Tên tôi là Minh. Tên của bạn là gì?" },
+                    { speaker: "Alex", en: "My name is Alex. Nice to meet you.", vi: "Tên tôi là Alex. Rất vui được gặp bạn." },
+                    { speaker: "Minh", en: "Nice to meet you, too. Where are you from?", vi: "Tôi cũng rất vui được gặp bạn. Bạn đến từ đâu?" },
+                    { speaker: "Alex", en: "I am from Da Nang, and I live in Ho Chi Minh City now.", vi: "Tôi đến từ Đà Nẵng, và bây giờ tôi sống ở Thành phố Hồ Chí Minh." },
+                    { speaker: "Minh", en: "Oh, I live in this city, too! What do you do, Alex?", vi: "Ồ, tôi cũng sống ở thành phố này! Bạn làm nghề gì vậy Alex?" },
+                    { speaker: "Alex", en: "I am an office worker. How about you?", vi: "Tôi là nhân viên văn phòng. Còn bạn thì sao?" },
+                    { speaker: "Minh", en: "I am a software engineer.", vi: "Tôi là một kỹ sư phần mềm." },
+                    { speaker: "Alex", en: "That is a really interesting job!", vi: "Đó là một công việc thật sự thú vị!" },
+                    { speaker: "Minh", en: "Thank you! What do you do in your free time?", vi: "Cảm ơn bạn! Bạn làm gì vào thời gian rảnh?" },
+                    { speaker: "Alex", en: "I usually read books and drink coffee. How about you?", vi: "Tôi thường đọc sách và uống cà phê. Còn bạn thì sao?" },
+                    { speaker: "Minh", en: "I drink coffee every morning, too! Oh, I have to go now.", vi: "Tôi cũng uống cà phê mỗi sáng! Ồ, bây giờ tôi phải đi rồi." },
+                    { speaker: "Alex", en: "Okay! See you later. Have a great day!", vi: "Ok! Hẹn gặp lại bạn sau nhé. Chúc bạn một ngày tuyệt vời!" },
+                    { speaker: "Minh", en: "Thank you! See you later!", vi: "Cảm ơn bạn! Hẹn gặp lại sau!" }
+                ],
+                exercises: {
+                    quiz: [
+                        {
+                            q: "Khi muốn hỏi nghề nghiệp của ai đó, ta dùng câu nào chuẩn nhất?",
+                            options: ["Where are you from?", "What do you do?", "How about you?", "What is your name?"],
+                            answer: 1
+                        },
+                        {
+                            q: "Chọn từ đúng điền vào chỗ trống: 'That ___ a really interesting job!'",
+                            options: ["am", "are", "is", "do"],
+                            answer: 2
+                        },
+                        {
+                            q: "Câu 'I have to go now' mang ý nghĩa gì trong giao tiếp?",
+                            options: ["Tôi thích đi chơi bây giờ", "Bây giờ tôi phải đi rồi", "Tôi đang đi dạo", "Hẹn gặp bạn ngày mai"],
+                            answer: 1
+                        },
+                        {
+                            q: "Từ nào dưới đây có phiên âm là /ˌen.dʒɪˈnɪər/?",
+                            options: ["office", "worker", "software", "engineer"],
+                            answer: 3
+                        }
+                    ],
+                    fill: [
+                        {
+                            sentence: "I ___ in Ho Chi Minh City now.",
+                            hint: "sống, sinh sống",
+                            answer: "live"
+                        },
+                        {
+                            sentence: "What do you do in your ___ ___?",
+                            hint: "thời gian rảnh (2 từ)",
+                            answer: "free time"
+                        },
+                        {
+                            sentence: "I ___ read books and drink coffee.",
+                            hint: "thường xuyên",
+                            answer: "usually"
+                        },
+                        {
+                            sentence: "See you ___! Have a great day!",
+                            hint: "sau nhé / lát nữa",
+                            answer: "later"
+                        }
+                    ],
+                    reorder: [
+                        {
+                            vi: "Bạn đến từ đâu?",
+                            words: ["Where", "you", "are", "from?"],
+                            answer: "Where are you from?"
+                        },
+                        {
+                            vi: "Tôi là một nhân viên văn phòng.",
+                            words: ["worker.", "am", "an", "I", "office"],
+                            answer: "I am an office worker."
+                        },
+                        {
+                            vi: "Bây giờ tôi phải đi rồi.",
+                            words: ["now.", "have to", "I", "go"],
+                            answer: "I have to go now."
+                        },
+                        {
+                            vi: "Chúc bạn một ngày tuyệt vời!",
+                            words: ["day!", "a", "Have", "great"],
+                            answer: "Have a great day!"
+                        }
+                    ]
+                }
+            }
+            // --- KẾT THÚC TOPIC 1 ---
+            // 📍 DÁN TOPIC 2, 3, 4... VÀO NGAY DƯỚI DÒNG NÀY (Nhớ thêm dấu phẩy ',' sau dấu '}' của Topic trước)
+            // --- BẮT ĐẦU TOPIC 2 ---
+            ,{
+                id: 2,
+                title: "Topic 2: Lịch trình & Giờ giấc (Daily Routines & Time)",
+                vocab: [
+                    { word: "time", ipa: "/taɪm/", type: "n", meaning: "thời gian, giờ" },
+                    { word: "wake up", ipa: "/weɪk ʌp/", type: "phr.v", meaning: "thức dậy" },
+                    { word: "every", ipa: "/ˈev.ri/", type: "det", meaning: "mỗi, mọi" },
+                    { word: "early", ipa: "/ˈɜː.li/", type: "adv/adj", meaning: "sớm" },
+                    { word: "around", ipa: "/əˈraʊnd/", type: "prep/adv", meaning: "khoảng chừng" },
+                    { word: "o'clock", ipa: "/əˈklɒk/", type: "adv", meaning: "giờ đúng" },
+                    { word: "exercise", ipa: "/ˈek.sə.saɪz/", type: "v/n", meaning: "tập thể dục" },
+                    { word: "before", ipa: "/bɪˈfɔːr/", type: "prep", meaning: "trước khi" },
+                    { word: "breakfast", ipa: "/ˈbrek.fəst/", type: "n", meaning: "bữa sáng" },
+                    { word: "often", ipa: "/ˈɒf.ən/", type: "adv", meaning: "thường hay" },
+                    { word: "run", ipa: "/rʌn/", type: "v", meaning: "chạy bộ" },
+                    { word: "park", ipa: "/pɑːk/", type: "n", meaning: "công viên" },
+                    { word: "thirty", ipa: "/ˈθɜː.ti/", type: "num", meaning: "ba mươi (30)" },
+                    { word: "minute", ipa: "/ˈmɪn.ɪt/", type: "n", meaning: "phút" },
+                    { word: "start", ipa: "/stɑːt/", type: "v", meaning: "bắt đầu" },
+                    { word: "work", ipa: "/wɜːk/", type: "n/v", meaning: "công việc, làm việc" },
+                    { word: "eight", ipa: "/eɪt/", type: "num", meaning: "tám (8)" },
+                    { word: "half", ipa: "/hɑːf/", type: "n", meaning: "một nửa (30 phút)" },
+                    { word: "past", ipa: "/pɑːst/", type: "prep", meaning: "qua, hơn (giờ)" },
+                    { word: "lunch", ipa: "/lʌntʃ/", type: "n", meaning: "bữa trưa" },
+                    { word: "noon", ipa: "/nuːn/", type: "n", meaning: "buổi trưa (12 giờ)" },
+                    { word: "co-worker", ipa: "/ˈkəʊˌwɜː.kər/", type: "n", meaning: "đồng nghiệp" },
+                    { word: "finish", ipa: "/ˈfɪn.ɪʃ/", type: "v", meaning: "kết thúc, hoàn thành" },
+                    { word: "evening", ipa: "/ˈiːv.nɪŋ/", type: "n", meaning: "buổi tối" },
+                    { word: "five", ipa: "/faɪv/", type: "num", meaning: "năm (5)" },
+                    { word: "sometimes", ipa: "/ˈsʌm.taɪmz/", type: "adv", meaning: "thỉnh thoảng" },
+                    { word: "cook", ipa: "/kʊk/", type: "v", meaning: "nấu ăn" },
+                    { word: "dinner", ipa: "/ˈdɪn.ər/", type: "n", meaning: "bữa tối" },
+                    { word: "home", ipa: "/həʊm/", type: "n/adv", meaning: "nhà, tại nhà" },
+                    { word: "watch", ipa: "/wɒtʃ/", type: "v", meaning: "xem" },
+                    { word: "movie", ipa: "/ˈmuː.vi/", type: "n", meaning: "bộ phim" },
+                    { word: "night", ipa: "/naɪt/", type: "n", meaning: "ban đêm" },
+                    { word: "never", ipa: "/ˈnev.ər/", type: "adv", meaning: "không bao giờ" },
+                    { word: "stay up", ipa: "/steɪ ʌp/", type: "phr.v", meaning: "thức (khuya)" },
+                    { word: "late", ipa: "/leɪt/", type: "adv/adj", meaning: "muộn, trễ" },
+                    { word: "bed", ipa: "/bed/", type: "n", meaning: "giường ngủ" },
+                    { word: "ten", ipa: "/ten/", type: "num", meaning: "mười (10)" },
+                    { word: "healthy", ipa: "/ˈhel.θi/", type: "adj", meaning: "lành mạnh, khỏe mạnh" },
+                    { word: "routine", ipa: "/ruːˈtiːn/", type: "n", meaning: "lịch trình, thói quen" }
+                ],
+                grammar: [
+                    {
+                        title: "1. Cách hỏi và trả lời Giờ giấc (Asking & Telling the Time)",
+                        usage: "Dùng để hỏi giờ hiện tại hoặc hỏi thời điểm ai đó thực hiện một hành động.",
+                        formula: [
+                            "(?) What time is it? -> It is + [Giờ] + o'clock.",
+                            "(?) What time + do / does + S + V(nguyên mẫu)?",
+                            "(+) Giờ hơn 30 phút: half past + [Giờ] (hoặc: [Giờ] + thirty)"
+                        ],
+                        note: "Dùng 'around + giờ' để chỉ khoảng chừng (VD: around 6 o'clock = khoảng 6 giờ).",
+                        examples: [
+                            { en: "What time do you wake up every morning?", vi: "Bạn thức dậy lúc mấy giờ mỗi sáng?" },
+                            { en: "I start work at half past eight.", vi: "Tôi bắt đầu làm việc lúc 8 giờ rưỡi." }
+                        ]
+                    },
+                    {
+                        title: "2. Giới từ chỉ thời gian: AT / IN / ON (Prepositions of Time)",
+                        usage: "Dùng để xác định chính xác mốc thời gian hoặc buổi trong ngày.",
+                        formula: [
+                            "AT + giờ cụ thể / noon / night (at 8 o'clock, at noon, at night)",
+                            "IN + buổi trong ngày (in the morning, in the evening)",
+                            "ON + ngày trong tuần / ngày tháng (on Monday, on Sunday)"
+                        ],
+                        note: "Chú ý ngoại lệ: Ban đêm dùng 'AT night', buổi trưa dùng 'AT noon'.",
+                        examples: [
+                            { en: "We have lunch at noon.", vi: "Chúng tôi ăn trưa vào lúc 12 giờ trưa." },
+                            { en: "When do you finish work in the evening?", vi: "Bạn kết thúc công việc lúc nào vào buổi tối?" }
+                        ]
+                    },
+                    {
+                        title: "3. Vị trí của Trạng từ chỉ tần suất (Adverbs of Frequency)",
+                        usage: "Diễn tả mức độ thường xuyên của hành động (always, usually, often, sometimes, never).",
+                        formula: [
+                            "S + [Trạng từ tần suất] + V(thường)",
+                            "S + am / is / are + [Trạng từ tần suất] + Adj / N"
+                        ],
+                        note: "Trạng từ tần suất luôn đứng TRƯỚC động từ thường và đứng SAU động từ To Be.",
+                        examples: [
+                            { en: "I often run in the park for thirty minutes.", vi: "Tôi thường chạy bộ trong công viên khoảng 30 phút." },
+                            { en: "I never stay up late at night.", vi: "Tôi không bao giờ thức khuya vào ban đêm." }
+                        ]
+                    }
+                ],
+                dialogue: [
+                    { speaker: "Minh", en: "What time do you wake up every morning, Alex?", vi: "Bạn thức dậy lúc mấy giờ vào mỗi buổi sáng vậy Alex?" },
+                    { speaker: "Alex", en: "I wake up early, around six o'clock.", vi: "Tôi thức dậy sớm, vào khoảng 6 giờ đúng." },
+                    { speaker: "Minh", en: "Do you exercise before breakfast?", vi: "Bạn có tập thể dục trước bữa sáng không?" },
+                    { speaker: "Alex", en: "Yes, I often run in the park for thirty minutes.", vi: "Có, tôi thường chạy bộ ở công viên trong 30 phút." },
+                    { speaker: "Minh", en: "That is great! What time do you start work?", vi: "Tuyệt thật! Bạn bắt đầu công việc lúc mấy giờ?" },
+                    { speaker: "Alex", en: "I start work at eight o'clock. How about you?", vi: "Tôi bắt đầu làm việc lúc 8 giờ đúng. Còn bạn thì sao?" },
+                    { speaker: "Minh", en: "I start at half past eight.", vi: "Tôi bắt đầu vào lúc 8 giờ rưỡi." },
+                    { speaker: "Alex", en: "Where do you have lunch?", vi: "Bạn ăn trưa ở đâu?" },
+                    { speaker: "Minh", en: "I have lunch at noon with my co-workers.", vi: "Tôi ăn trưa lúc 12 giờ trưa cùng với các đồng nghiệp của mình." },
+                    { speaker: "Alex", en: "When do you finish work in the evening?", vi: "Bạn kết thúc công việc lúc nào vào buổi tối?" },
+                    { speaker: "Minh", en: "I usually finish at five o'clock.", vi: "Tôi thường kết thúc vào lúc 5 giờ đúng." },
+                    { speaker: "Alex", en: "What do you do after work?", vi: "Bạn làm gì sau giờ làm việc?" },
+                    { speaker: "Minh", en: "I sometimes cook dinner at home and watch a movie.", vi: "Thỉnh thoảng tôi nấu bữa tối ở nhà và xem một bộ phim." },
+                    { speaker: "Alex", en: "Do you stay up late at night?", vi: "Bạn có thức khuya vào ban đêm không?" },
+                    { speaker: "Minh", en: "No, I never stay up late. I go to bed at ten o'clock.", vi: "Không, tôi không bao giờ thức khuya. Tôi đi ngủ lúc 10 giờ." },
+                    { speaker: "Alex", en: "You have a really healthy routine!", vi: "Bạn có một lịch trình sinh hoạt thật sự lành mạnh đấy!" }
+                ],
+                exercises: {
+                    quiz: [
+                        {
+                            q: "Cụm từ 'half past eight' tương ứng với mấy giờ?",
+                            options: ["8 giờ kém 30", "8 giờ đúng", "8 giờ 15 phút", "8 giờ 30 phút"],
+                            answer: 3
+                        },
+                        {
+                            q: "Chọn giới từ đúng: 'I never stay up late ___ night.'",
+                            options: ["in", "on", "at", "from"],
+                            answer: 2
+                        },
+                        {
+                            q: "Câu nào dưới đây đặt vị trí trạng từ tần suất ĐÚNG ngữ pháp?",
+                            options: ["I cook sometimes dinner.", "I sometimes cook dinner.", "Sometimes I dinner cook.", "I cook dinner sometimes at."],
+                            answer: 1
+                        },
+                        {
+                            q: "Từ nào mang nghĩa là 'đồng nghiệp'?",
+                            options: ["co-worker", "routine", "breakfast", "evening"],
+                            answer: 0
+                        }
+                    ],
+                    fill: [
+                        {
+                            sentence: "What time do you ___ ___ every morning?",
+                            hint: "thức dậy (2 từ)",
+                            answer: "wake up"
+                        },
+                        {
+                            sentence: "I often run in the park for ___ minutes.",
+                            hint: "ba mươi / 30 (viết bằng chữ)",
+                            answer: "thirty"
+                        },
+                        {
+                            sentence: "I have ___ at noon with my co-workers.",
+                            hint: "bữa trưa",
+                            answer: "lunch"
+                        },
+                        {
+                            sentence: "You have a really ___ routine!",
+                            hint: "lành mạnh, khỏe mạnh",
+                            answer: "healthy"
+                        }
+                    ],
+                    reorder: [
+                        {
+                            vi: "Bạn bắt đầu làm việc lúc mấy giờ?",
+                            words: ["work?", "time", "do", "What", "start", "you"],
+                            answer: "What time do you start work?"
+                        },
+                        {
+                            vi: "Tôi thức dậy sớm vào khoảng 6 giờ.",
+                            words: ["around", "wake up", "six", "early", "I", "o'clock."],
+                            answer: "I wake up early around six o'clock."
+                        },
+                        {
+                            vi: "Tôi không bao giờ thức khuya vào ban đêm.",
+                            words: ["night.", "stay up", "at", "never", "late", "I"],
+                            answer: "I never stay up late at night."
+                        },
+                        {
+                            vi: "Tôi đi ngủ lúc 10 giờ đúng.",
+                            words: ["at", "bed", "I", "ten", "go to", "o'clock."],
+                            answer: "I go to bed at ten o'clock."
+                        }
+                    ]
+                }
+            }
+            // --- KẾT THÚC TOPIC 2 ---
+            // --- BẮT ĐẦU TOPIC 3 ---
+            ,{
+                id: 3,
+                title: "Topic 3: Gia đình & Mối quan hệ (Family & Relationships)",
+                vocab: [
+                    { word: "family", ipa: "/ˈfæm.əl.i/", type: "n", meaning: "gia đình" },
+                    { word: "photo", ipa: "/ˈfəʊ.təʊ/", type: "n", meaning: "bức ảnh" },
+                    { word: "how many", ipa: "/haʊ ˈmen.i/", type: "phrase", meaning: "có bao nhiêu" },
+                    { word: "people", ipa: "/ˈpiː.pəl/", type: "n", meaning: "người, mọi người" },
+                    { word: "there are", ipa: "/ðeər ɑːr/", type: "phrase", meaning: "có (dùng cho số nhiều)" },
+                    { word: "parents", ipa: "/ˈpeə.rənts/", type: "n", meaning: "bố mẹ" },
+                    { word: "younger", ipa: "/ˈjʌŋ.ɡər/", type: "adj", meaning: "nhỏ tuổi hơn, trẻ hơn" },
+                    { word: "sister", ipa: "/ˈsɪs.tər/", type: "n", meaning: "chị/em gái" },
+                    { word: "father", ipa: "/ˈfɑː.ðər/", type: "n", meaning: "bố, cha" },
+                    { word: "doctor", ipa: "/ˈdɒk.tər/", type: "n", meaning: "bác sĩ" },
+                    { word: "hospital", ipa: "/ˈhɒs.pɪ.təl/", type: "n", meaning: "bệnh viện" },
+                    { word: "mother", ipa: "/ˈmʌð.ər/", type: "n", meaning: "mẹ" },
+                    { word: "teacher", ipa: "/ˈtiː.tʃər/", type: "n", meaning: "giáo viên" },
+                    { word: "high school", ipa: "/ˈhaɪ ˌskuːl/", type: "n", meaning: "trường cấp 3 (THPT)" },
+                    { word: "how old", ipa: "/haʊ əʊld/", type: "phrase", meaning: "bao nhiêu tuổi" },
+                    { word: "twenty", ipa: "/ˈtwen.ti/", type: "num", meaning: "hai mươi (20)" },
+                    { word: "year", ipa: "/jɪər/", type: "n", meaning: "năm, tuổi" },
+                    { word: "old", ipa: "/əʊld/", type: "adj", meaning: "già, tuổi" },
+                    { word: "university", ipa: "/ˌjuː.nɪˈvɜː.sə.ti/", type: "n", meaning: "trường đại học" },
+                    { word: "student", ipa: "/ˈstjuː.dənt/", type: "n", meaning: "sinh viên, học sinh" },
+                    { word: "close", ipa: "/kləʊs/", type: "adj", meaning: "thân thiết, gần gũi" },
+                    { word: "talk", ipa: "/tɔːk/", type: "v", meaning: "nói chuyện, trò chuyện" },
+                    { word: "together", ipa: "/təˈɡeð.ər/", type: "adv", meaning: "cùng nhau" },
+                    { word: "married", ipa: "/ˈmær.id/", type: "adj", meaning: "đã kết hôn" },
+                    { word: "single", ipa: "/ˈsɪŋ.ɡəl/", type: "adj", meaning: "độc thân" },
+                    { word: "older", ipa: "/ˈəʊl.dər/", type: "adj", meaning: "lớn tuổi hơn" },
+                    { word: "brother", ipa: "/ˈbrʌð.ər/", type: "n", meaning: "anh/em trai" },
+                    { word: "wife", ipa: "/waɪf/", type: "n", meaning: "vợ" },
+                    { word: "husband", ipa: "/ˈhʌz.bənd/", type: "n", meaning: "chồng" },
+                    { word: "son", ipa: "/sʌn/", type: "n", meaning: "con trai" },
+                    { word: "daughter", ipa: "/ˈdɔː.tər/", type: "n", meaning: "con gái" },
+                    { word: "cute", ipa: "/kjuːt/", type: "adj", meaning: "dễ thương, đáng yêu" },
+                    { word: "weekend", ipa: "/ˌwiːkˈend/", type: "n", meaning: "cuối tuần" },
+                    { word: "visit", ipa: "/ˈvɪz.ɪt/", type: "v", meaning: "thăm, ghé thăm" },
+                    { word: "grandparents", ipa: "/ˈɡræn.peə.rənts/", type: "n", meaning: "ông bà" },
+                    { word: "happy", ipa: "/ˈhæp.i/", type: "adj", meaning: "hạnh phúc, vui vẻ" }
+                ],
+                grammar: [
+                    {
+                        title: "1. Cấu trúc hỏi Số lượng & Giới thiệu thành viên (How many & There are)",
+                        usage: "Dùng để hỏi có bao nhiêu người/vật và liệt kê số lượng trong gia đình.",
+                        formula: [
+                            "(?) How many + N(số nhiều) + are there + in your family?",
+                            "(+) There are + [Số lượng] + N(số nhiều) + in my family."
+                        ],
+                        note: "Danh từ 'people' (mọi người) đã là số nhiều sẵn nên không thêm 's'.",
+                        examples: [
+                            { en: "How many people are there in your family?", vi: "Có bao nhiêu người trong gia đình của bạn?" },
+                            { en: "There are four people in my family.", vi: "Có 4 người trong gia đình của tôi." }
+                        ]
+                    },
+                    {
+                        title: "2. Tính từ sở hữu & Sở hữu cách (Possessive Adjectives & 's)",
+                        usage: "Dùng để chỉ mối quan hệ hoặc quyền sở hữu của ai đó.",
+                        formula: [
+                            "Tính từ sở hữu: my / your / his / her / our / their + Danh từ",
+                            "Sở hữu cách: [Danh từ tên riêng/người] + 's + Danh từ"
+                        ],
+                        note: "Chú ý phân biệt: 'he' (anh ấy) -> 'his' (của anh ấy) | 'she' (cô ấy) -> 'her' (của cô ấy).",
+                        examples: [
+                            { en: "This is my family photo.", vi: "Đây là bức ảnh gia đình của tôi." },
+                            { en: "My brother's wife is a teacher.", vi: "Vợ của anh trai tôi là một giáo viên." }
+                        ]
+                    },
+                    {
+                        title: "3. Cách hỏi và trả lời Tuổi tác (Asking & Telling Age)",
+                        usage: "Dùng động từ TO BE để hỏi và nói về số tuổi.",
+                        formula: [
+                            "(?) How old + is / are + S?",
+                            "(+) S + am / is / are + [Số tuổi] + (years old)."
+                        ],
+                        note: "Tuyệt đối dùng động từ To Be (am/is/are) khi nói tuổi, không dùng 'have'.",
+                        examples: [
+                            { en: "How old is your younger sister?", vi: "Em gái của bạn bao nhiêu tuổi?" },
+                            { en: "She is twenty years old.", vi: "Cô ấy 20 tuổi." }
+                        ]
+                    }
+                ],
+                dialogue: [
+                    { speaker: "Alex", en: "Is this your family photo, Minh?", vi: "Đây có phải là bức ảnh gia đình của bạn không Minh?" },
+                    { speaker: "Minh", en: "Yes, it is! How many people are there in your family, Alex?", vi: "Đúng rồi! Có bao nhiêu người trong gia đình của bạn vậy Alex?" },
+                    { speaker: "Alex", en: "There are four people: my parents, my younger sister, and me.", vi: "Có 4 người: bố mẹ tôi, em gái tôi và tôi." },
+                    { speaker: "Minh", en: "What does your father do?", vi: "Bố của bạn làm nghề gì?" },
+                    { speaker: "Alex", en: "My father is a doctor at a city hospital.", vi: "Bố tôi là bác sĩ tại một bệnh viện thành phố." },
+                    { speaker: "Minh", en: "How about your mother?", vi: "Còn mẹ của bạn thì sao?" },
+                    { speaker: "Alex", en: "She is a high school teacher.", vi: "Bà ấy là một giáo viên cấp 3." },
+                    { speaker: "Minh", en: "How old is your younger sister?", vi: "Em gái của bạn bao nhiêu tuổi?" },
+                    { speaker: "Alex", en: "She is twenty years old. She is a university student.", vi: "Em ấy 20 tuổi. Em ấy là sinh viên đại học." },
+                    { speaker: "Minh", en: "Are you close with your sister?", vi: "Bạn có thân thiết với em gái mình không?" },
+                    { speaker: "Alex", en: "Yes, we often talk and drink coffee together.", vi: "Có, chúng tôi thường trò chuyện và uống cà phê cùng nhau." },
+                    { speaker: "Minh", en: "Are you married, Alex?", vi: "Bạn đã kết hôn chưa Alex?" },
+                    { speaker: "Alex", en: "No, I am single. How about your family, Minh?", vi: "Chưa, tôi còn độc thân. Còn gia đình bạn thì sao Minh?" },
+                    { speaker: "Minh", en: "I have an older brother. He is married.", vi: "Tôi có một người anh trai. Anh ấy đã kết hôn rồi." },
+                    { speaker: "Alex", en: "Does he have children?", vi: "Anh ấy đã có con chưa?" },
+                    { speaker: "Minh", en: "Yes, he and his wife have a cute son and a daughter.", vi: "Rồi, anh ấy và vợ có một cậu con trai và một cô con gái rất đáng yêu." },
+                    { speaker: "Alex", en: "What do you do with your family on the weekend?", vi: "Bạn làm gì cùng gia đình vào dịp cuối tuần?" },
+                    { speaker: "Minh", en: "We usually visit our grandparents and cook dinner together.", vi: "Chúng tôi thường ghé thăm ông bà và nấu bữa tối cùng nhau." },
+                    { speaker: "Alex", en: "You have a really happy family!", vi: "Bạn có một gia đình thật sự hạnh phúc đấy!" }
+                ],
+                exercises: {
+                    quiz: [
+                        {
+                            q: "Khi muốn hỏi gia đình ai đó có bao nhiêu người, ta hỏi như thế nào?",
+                            options: [
+                                "How old are people in your family?",
+                                "How many people are there in your family?",
+                                "Where are the people in your family?",
+                                "What do people do in your family?"
+                            ],
+                            answer: 1
+                        },
+                        {
+                            q: "Điền tính từ sở hữu đúng: 'He and ___ wife have a cute son.'",
+                            options: ["her", "their", "his", "your"],
+                            answer: 2
+                        },
+                        {
+                            q: "Từ 'single' trong câu 'No, I am single' có nghĩa là gì?",
+                            options: ["Đã kết hôn", "Độc thân", "Thân thiết", "Sinh viên"],
+                            answer: 1
+                        },
+                        {
+                            q: "Từ nào dưới đây có nghĩa là 'ông bà'?",
+                            options: ["parents", "grandparents", "co-workers", "university"],
+                            answer: 1
+                        }
+                    ],
+                    fill: [
+                        {
+                            sentence: "There are four ___ in my family.",
+                            hint: "người / mọi người",
+                            answer: "people"
+                        },
+                        {
+                            sentence: "She is twenty years old. She is a ___ student.",
+                            hint: "trường đại học",
+                            answer: "university"
+                        },
+                        {
+                            sentence: "We usually ___ our grandparents on the weekend.",
+                            hint: "thăm, ghé thăm",
+                            answer: "visit"
+                        },
+                        {
+                            sentence: "Yes, we often talk and drink coffee ___.",
+                            hint: "cùng nhau",
+                            answer: "together"
+                        }
+                    ],
+                    reorder: [
+                        {
+                            vi: "Em gái của bạn bao nhiêu tuổi?",
+                            words: ["sister?", "old", "your", "How", "younger", "is"],
+                            answer: "How old is your younger sister?"
+                        },
+                        {
+                            vi: "Bố tôi là một bác sĩ tại bệnh viện.",
+                            words: ["hospital.", "a", "My", "at", "doctor", "is", "father", "a"],
+                            answer: "My father is a doctor at a hospital."
+                        },
+                        {
+                            vi: "Bạn đã kết hôn chưa?",
+                            words: ["married?", "you", "Are"],
+                            answer: "Are you married?"
+                        },
+                        {
+                            vi: "Bạn có một gia đình thật sự hạnh phúc!",
+                            words: ["family!", "happy", "have", "really", "You", "a"],
+                            answer: "You have a really happy family!"
+                        }
+                    ]
+                }
+            }
+            // --- KẾT THÚC TOPIC 3 ---
+            // --- BẮT ĐẦU TOPIC 4 ---
+            ,{
+                id: 4,
+                title: "Topic 4: Sở thích & Giải trí (Hobbies & Entertainment)",
+                vocab: [
+                    { word: "hobby", ipa: "/ˈhɒb.i/", type: "n", meaning: "sở thích" },
+                    { word: "like", ipa: "/laɪk/", type: "v", meaning: "thích" },
+                    { word: "listen", ipa: "/ˈlɪs.ən/", type: "v", meaning: "lắng nghe" },
+                    { word: "music", ipa: "/ˈmjuː.zɪk/", type: "n", meaning: "âm nhạc" },
+                    { word: "kind", ipa: "/kaɪnd/", type: "n", meaning: "loại, thể loại" },
+                    { word: "favorite", ipa: "/ˈfeɪ.vər.ɪt/", type: "adj/n", meaning: "yêu thích nhất" },
+                    { word: "pop", ipa: "/pɒp/", type: "n", meaning: "nhạc trẻ (nhạc Pop)" },
+                    { word: "song", ipa: "/sɒŋ/", type: "n", meaning: "bài hát" },
+                    { word: "relaxing", ipa: "/rɪˈlæk.sɪŋ/", type: "adj", meaning: "thư giãn, thoải mái" },
+                    { word: "can", ipa: "/kæn/", type: "modal", meaning: "có thể, biết (làm gì)" },
+                    { word: "play", ipa: "/pleɪ/", type: "v", meaning: "chơi (nhạc cụ, thể thao)" },
+                    { word: "guitar", ipa: "/ɡɪˈtɑːr/", type: "n", meaning: "đàn ghi-ta" },
+                    { word: "a little", ipa: "/ə ˈlɪt.əl/", type: "phrase", meaning: "một chút, một ít" },
+                    { word: "sing", ipa: "/sɪŋ/", type: "v", meaning: "hát, ca hát" },
+                    { word: "well", ipa: "/wel/", type: "adv", meaning: "tốt, giỏi, hay" },
+                    { word: "practice", ipa: "/ˈpræk.tɪs/", type: "v/n", meaning: "luyện tập" },
+                    { word: "room", ipa: "/ruːm/", type: "n", meaning: "căn phòng" },
+                    { word: "sport", ipa: "/spɔːt/", type: "n", meaning: "thể thao" },
+                    { word: "enjoy", ipa: "/ɪnˈdʒɔɪ/", type: "v", meaning: "thích thú, tận hưởng" },
+                    { word: "badminton", ipa: "/ˈbæd.mɪn.tən/", type: "n", meaning: "môn cầu lông" },
+                    { word: "swim", ipa: "/swɪm/", type: "v", meaning: "bơi lội" },
+                    { word: "friend", ipa: "/frend/", type: "n", meaning: "bạn bè, người bạn" },
+                    { word: "love", ipa: "/lʌv/", type: "v", meaning: "yêu thích, cực kỳ thích" },
+                    { word: "take", ipa: "/teɪk/", type: "v", meaning: "chụp (ảnh), lấy, cầm" },
+                    { word: "picture", ipa: "/ˈpɪk.tʃər/", type: "n", meaning: "bức hình, bức tranh" },
+                    { word: "nature", ipa: "/ˈneɪ.tʃər/", type: "n", meaning: "thiên nhiên" },
+                    { word: "camera", ipa: "/ˈkæm.rə/", type: "n", meaning: "máy ảnh" },
+                    { word: "new", ipa: "/njuː/", type: "adj", meaning: "mới" },
+                    { word: "travel", ipa: "/ˈtræv.əl/", type: "v", meaning: "đi du lịch" },
+                    { word: "place", ipa: "/pleɪs/", type: "n", meaning: "địa điểm, nơi chốn" },
+                    { word: "beautiful", ipa: "/ˈbjuː.tɪ.fəl/", type: "adj", meaning: "đẹp, xinh đẹp" },
+                    { word: "exciting", ipa: "/ɪkˈsaɪ.tɪŋ/", type: "adj", meaning: "hào hứng, thú vị" },
+                    { word: "join", ipa: "/dʒɔɪn/", type: "v", meaning: "tham gia" },
+                    { word: "next", ipa: "/nekst/", type: "adj", meaning: "tiếp theo, tới" },
+                    { word: "Sunday", ipa: "/ˈsʌn.deɪ/", type: "n", meaning: "Chủ nhật" },
+                    { word: "sure", ipa: "/ʃɔːr/", type: "adj/adv", meaning: "chắc chắn rồi" }
+                ],
+                grammar: [
+                    {
+                        title: "1. Cấu trúc nói về Sở thích (Like / Love / Enjoy + V-ing)",
+                        usage: "Dùng để diễn tả việc ai đó thích hoặc đam mê làm một hoạt động gì lâu dài.",
+                        formula: [
+                            "(+) S + like / love / enjoy + V-ing",
+                            "(-) S + do / does + not + like / enjoy + V-ing",
+                            "(?) What + do / does + S + like + doing?"
+                        ],
+                        note: "Sau 'enjoy' BẮT BUỘC dùng V-ing. Sau 'like' và 'love' dùng V-ing khi nói về sở thích chung.",
+                        examples: [
+                            { en: "I like listening to music in my free time.", vi: "Tôi thích nghe nhạc vào thời gian rảnh." },
+                            { en: "I enjoy playing badminton and swimming.", vi: "Tôi thích chơi cầu lông và bơi lội." }
+                        ]
+                    },
+                    {
+                        title: "2. Động từ khuyết thiếu chỉ khả năng: CAN / CAN'T (Có thể / Biết làm gì)",
+                        usage: "Dùng để nói hoặc hỏi xem ai đó có kỹ năng, khả năng làm việc gì hay không.",
+                        formula: [
+                            "(+) S + can + V(nguyên mẫu)",
+                            "(-) S + cannot (can't) + V(nguyên mẫu)",
+                            "(?) Can + S + V(nguyên mẫu)? -> Yes, S + can. / No, S + can't."
+                        ],
+                        note: "Động từ đứng sau 'can / can't' luôn giữ nguyên mẫu với mọi chủ ngữ (không chia s/es).",
+                        examples: [
+                            { en: "Can you play the guitar?", vi: "Bạn có biết chơi đàn ghi-ta không?" },
+                            { en: "I can play a little, and I can sing quite well.", vi: "Tôi biết chơi một chút, và tôi có thể hát khá hay." }
+                        ]
+                    },
+                    {
+                        title: "3. Cách kết hợp từ chuẩn với PLAY / GO / TAKE (Collocations)",
+                        usage: "Sử dụng đúng động từ đi kèm với từng nhóm hoạt động giải trí.",
+                        formula: [
+                            "PLAY + môn thể thao có bóng/cầu: play badminton",
+                            "PLAY + the + nhạc cụ: play the guitar",
+                            "TAKE + photos / pictures: chụp ảnh | LISTEN TO + music: nghe nhạc"
+                        ],
+                        note: "Khi chơi nhạc cụ luôn có chữ 'the' ở giữa (play the guitar), còn chơi thể thao thì KHÔNG có 'the' (play badminton).",
+                        examples: [
+                            { en: "I love taking pictures of nature.", vi: "Tôi rất thích chụp hình thiên nhiên." }
+                        ]
+                    }
+                ],
+                dialogue: [
+                    { speaker: "Minh", en: "What are your hobbies, Alex?", vi: "Sở thích của bạn là gì vậy Alex?" },
+                    { speaker: "Alex", en: "I like listening to music in my free time.", vi: "Tôi thích nghe nhạc vào thời gian rảnh." },
+                    { speaker: "Minh", en: "What kind of music is your favorite?", vi: "Thể loại nhạc nào là sở thích nhất của bạn?" },
+                    { speaker: "Alex", en: "My favorite is pop music. The songs are very relaxing.", vi: "Yêu thích nhất của tôi là nhạc Pop. Các bài hát rất thư giãn." },
+                    { speaker: "Minh", en: "Can you play the guitar?", vi: "Bạn có biết chơi đàn ghi-ta không?" },
+                    { speaker: "Alex", en: "Yes, I can play a little, but I cannot sing well.", vi: "Có, tôi biết chơi một chút, nhưng tôi không hát hay được." },
+                    { speaker: "Minh", en: "When do you practice the guitar?", vi: "Bạn luyện tập đàn ghi-ta khi nào?" },
+                    { speaker: "Alex", en: "I often practice in my room in the evening. How about your hobbies, Minh?", vi: "Tôi thường luyện tập trong phòng vào buổi tối. Còn sở thích của bạn thì sao Minh?" },
+                    { speaker: "Minh", en: "I really love sports! I enjoy playing badminton and swimming.", vi: "Tôi cực kỳ thích thể thao! Tôi thích chơi cầu lông và bơi lội." },
+                    { speaker: "Alex", en: "Who do you play badminton with?", vi: "Bạn chơi cầu lông cùng với ai?" },
+                    { speaker: "Minh", en: "I usually play with my friends at the park.", vi: "Tôi thường chơi với những người bạn của mình ở công viên." },
+                    { speaker: "Alex", en: "Do you have other hobbies?", vi: "Bạn còn có sở thích nào khác không?" },
+                    { speaker: "Minh", en: "Yes, I also love taking pictures of nature.", vi: "Có, tôi cũng rất thích chụp hình thiên nhiên." },
+                    { speaker: "Alex", en: "Oh, do you have a new camera?", vi: "Ồ, bạn có một chiếc máy ảnh mới à?" },
+                    { speaker: "Minh", en: "Yes! I often travel to beautiful places and take photos.", vi: "Đúng rồi! Tôi thường đi du lịch đến những địa điểm đẹp và chụp ảnh." },
+                    { speaker: "Alex", en: "That is really exciting! Can I join you next Sunday?", vi: "Điều đó thật sự hào hứng đấy! Chủ nhật tới tôi tham gia cùng bạn được không?" },
+                    { speaker: "Minh", en: "Sure! Let's go together next Sunday.", vi: "Chắc chắn rồi! Chủ nhật tới chúng ta cùng đi nhé." }
+                ],
+                exercises: {
+                    quiz: [
+                        {
+                            q: "Chọn dạng đúng của động từ: 'I enjoy ___ badminton with my friends.'",
+                            options: ["play", "plays", "playing", "to play"],
+                            answer: 2
+                        },
+                        {
+                            q: "Câu nào dưới đây sử dụng ĐÚNG cấu trúc với động từ 'play'?",
+                            options: [
+                                "Can you play guitar?",
+                                "Can you play the guitar?",
+                                "Can you playing the guitar?",
+                                "Can you play a badminton?"
+                            ],
+                            answer: 1
+                        },
+                        {
+                            q: "Cụm từ 'take pictures of nature' có nghĩa là gì?",
+                            options: ["Vẽ tranh thiên nhiên", "Đi dạo trong thiên nhiên", "Chụp hình thiên nhiên", "Ngắm nhìn thiên nhiên"],
+                            answer: 2
+                        },
+                        {
+                            q: "Từ nào dưới đây mang nghĩa là 'thư giãn, thoải mái'?",
+                            options: ["exciting", "relaxing", "favorite", "beautiful"],
+                            answer: 1
+                        }
+                    ],
+                    fill: [
+                        {
+                            sentence: "I like ___ to music in my free time.",
+                            hint: "lắng nghe (chia dạng V-ing)",
+                            answer: "listening"
+                        },
+                        {
+                            sentence: "Yes, I can play a little, but I cannot ___ well.",
+                            hint: "hát, ca hát",
+                            answer: "sing"
+                        },
+                        {
+                            sentence: "I often ___ in my room in the evening.",
+                            hint: "luyện tập",
+                            answer: "practice"
+                        },
+                        {
+                            sentence: "I often ___ to beautiful places and take photos.",
+                            hint: "đi du lịch",
+                            answer: "travel"
+                        }
+                    ],
+                    reorder: [
+                        {
+                            vi: "Bạn có biết chơi đàn ghi-ta không?",
+                            words: ["guitar?", "play", "you", "the", "Can"],
+                            answer: "Can you play the guitar?"
+                        },
+                        {
+                            vi: "Tôi thích chơi cầu lông với bạn bè.",
+                            words: ["friends.", "playing", "my", "enjoy", "badminton", "I", "with"],
+                            answer: "I enjoy playing badminton with my friends."
+                        },
+                        {
+                            vi: "Tôi rất thích chụp hình thiên nhiên.",
+                            words: ["nature.", "taking", "love", "of", "pictures", "I"],
+                            answer: "I love taking pictures of nature."
+                        },
+                        {
+                            vi: "Chủ nhật tới tôi tham gia cùng bạn được không?",
+                            words: ["Sunday?", "join", "next", "I", "you", "Can"],
+                            answer: "Can I join you next Sunday?"
+                        }
+                    ]
+                }
+            }
+            // --- KẾT THÚC TOPIC 4 ---
+            // --- BẮT ĐẦU TOPIC 5 ---
+            ,{
+                id: 5,
+                title: "Topic 5: Ẩm thực & Nhà hàng (Food & Restaurant)",
+                vocab: [
+                    { word: "welcome", ipa: "/ˈwel.kəm/", type: "v/interj", meaning: "chào mừng" },
+                    { word: "restaurant", ipa: "/ˈres.trɒnt/", type: "n", meaning: "nhà hàng" },
+                    { word: "table", ipa: "/ˈteɪ.bəl/", type: "n", meaning: "cái bàn" },
+                    { word: "two", ipa: "/tuː/", type: "num", meaning: "hai (2)" },
+                    { word: "please", ipa: "/pliːz/", type: "interj", meaning: "vui lòng, làm ơn" },
+                    { word: "follow", ipa: "/ˈfɒl.əʊ/", type: "v", meaning: "đi theo" },
+                    { word: "menu", ipa: "/ˈmen.juː/", type: "n", meaning: "thực đơn" },
+                    { word: "ready", ipa: "/ˈred.i/", type: "adj", meaning: "sẵn sàng" },
+                    { word: "order", ipa: "/ˈɔː.dər/", type: "v/n", meaning: "gọi món, đặt hàng" },
+                    { word: "would like", ipa: "/wʊd laɪk/", type: "phrase", meaning: "muốn (lịch sự)" },
+                    { word: "beef", ipa: "/biːf/", type: "n", meaning: "thịt bò" },
+                    { word: "steak", ipa: "/steɪk/", type: "n", meaning: "bít tết (thịt nướng lát)" },
+                    { word: "salad", ipa: "/ˈsæl.əd/", type: "n", meaning: "rau trộn (sa-lát)" },
+                    { word: "chicken", ipa: "/ˈtʃɪk.ɪn/", type: "n", meaning: "thịt gà" },
+                    { word: "soup", ipa: "/suːp/", type: "n", meaning: "món súp, canh" },
+                    { word: "fried", ipa: "/fraɪd/", type: "adj", meaning: "chiên, rán, xào" },
+                    { word: "rice", ipa: "/raɪs/", type: "n", meaning: "cơm, gạo" },
+                    { word: "anything", ipa: "/ˈen.i.θɪŋ/", type: "pron", meaning: "bất cứ thứ gì" },
+                    { word: "else", ipa: "/els/", type: "adv", meaning: "khác, thêm nữa" },
+                    { word: "glass", ipa: "/ɡlɑːs/", type: "n", meaning: "cái ly, cốc thủy tinh" },
+                    { word: "orange", ipa: "/ˈɒr.ɪndʒ/", type: "n", meaning: "quả cam" },
+                    { word: "juice", ipa: "/dʒuːs/", type: "n", meaning: "nước ép" },
+                    { word: "bottle", ipa: "/ˈbɒt.əl/", type: "n", meaning: "cái chai" },
+                    { word: "water", ipa: "/ˈwɔː.tər/", type: "n", meaning: "nước lọc, nước" },
+                    { word: "wait", ipa: "/weɪt/", type: "v", meaning: "chờ, đợi" },
+                    { word: "moment", ipa: "/ˈməʊ.mənt/", type: "n", meaning: "chốc lát, khoảnh khắc" },
+                    { word: "food", ipa: "/fuːd/", type: "n", meaning: "đồ ăn, thức ăn" },
+                    { word: "delicious", ipa: "/dɪˈlɪʃ.əs/", type: "adj", meaning: "ngon miệng" },
+                    { word: "hungry", ipa: "/ˈhʌŋ.ɡri/", type: "adj", meaning: "đói bụng" },
+                    { word: "eat", ipa: "/iːt/", type: "v", meaning: "ăn" },
+                    { word: "full", ipa: "/fʊl/", type: "adj", meaning: "no bụng, đầy" },
+                    { word: "dessert", ipa: "/dɪˈzɜːt/", type: "n", meaning: "món tráng miệng" },
+                    { word: "ice cream", ipa: "/ˈaɪs ˌkriːm/", type: "n", meaning: "kem" },
+                    { word: "excuse me", ipa: "/ɪkˈskjuːz miː/", type: "phrase", meaning: "xin lỗi (để gọi ai đó)" },
+                    { word: "bill", ipa: "/bɪl/", type: "n", meaning: "hóa đơn thanh toán" },
+                    { word: "Waiter", ipa: "/ˈweɪ.tər/", type: "n", meaning: "nhân viên phục vụ" }
+                ],
+                grammar: [
+                    {
+                        title: "1. Cấu trúc gọi món & yêu cầu lịch sự (Would like & Can/Could I have...)",
+                        usage: "Trong nhà hàng hoặc giao tiếp lịch sự, dùng 'would like' thay cho 'want' để thể hiện sự trang trọng.",
+                        formula: [
+                            "(+) I would like (I'd like) + a / some + [Tên món ăn/đồ uống].",
+                            "(?) Would you like + [Tên món] / to + V(nguyên mẫu)?",
+                            "(?) Can / Could we have + the menu / the bill, please?"
+                        ],
+                        note: "'I'd like' là viết tắt của 'I would like' (Tôi muốn...), khác hoàn toàn với 'I like' (Sở thích của tôi là...).",
+                        examples: [
+                            { en: "I would like a beef steak and some salad.", vi: "Tôi muốn gọi một phần bít tết bò và một ít rau trộn." },
+                            { en: "Can we have the bill, please?", vi: "Cho chúng tôi xin hóa đơn thanh toán nhé?" }
+                        ]
+                    },
+                    {
+                        title: "2. Danh từ Đếm được & Không đếm được trong Ẩm thực (Countable & Uncountable Nouns)",
+                        usage: "Cách dùng mạo từ 'a/an', lượng từ 'some' và đơn vị đo lường với đồ ăn thức uống.",
+                        formula: [
+                            "Danh từ đếm được số ít: a + steak / a + table / a + bottle",
+                            "Danh từ không đếm được: some + rice / soup / water / juice",
+                            "Đơn vị chứa đựng: a glass of + juice (1 ly...) | a bottle of + water (1 chai...)"
+                        ],
+                        note: "Các chất lỏng (water, juice, soup) và hạt nhỏ (rice) không đếm trực tiếp 1, 2 được mà phải dùng 'some' hoặc đóng qua ly/chai.",
+                        examples: [
+                            { en: "I'd like a glass of orange juice and a bottle of water.", vi: "Tôi muốn một ly nước cam và một chai nước lọc." }
+                        ]
+                    },
+                    {
+                        title: "3. Các mẫu câu giao tiếp chuẩn của Nhân viên & Khách hàng",
+                        usage: "Những câu hỏi đáp ngắn gọn cực kỳ phổ biến khi bước vào quán ăn.",
+                        formula: [
+                            "Khách đặt bàn: A table for + [Số người], please.",
+                            "Phục vụ hỏi gọi món: Are you ready to order? / Anything else?",
+                            "Gọi nhân viên lịch sự: Excuse me!"
+                        ],
+                        note: "Dùng 'Excuse me!' khi muốn thu hút sự chú ý của nhân viên phục vụ (không dùng 'Sorry').",
+                        examples: [
+                            { en: "Are you ready to order now?", vi: "Bây giờ quý khách đã sẵn sàng gọi món chưa ạ?" }
+                        ]
+                    }
+                ],
+                dialogue: [
+                    { speaker: "Waiter", en: "Welcome to our restaurant! How many people?", vi: "Chào mừng quý khách đến với nhà hàng của chúng tôi! Đi mấy người ạ?" },
+                    { speaker: "Alex", en: "Hello! A table for two, please.", vi: "Xin chào! Cho tôi một bàn cho 2 người nhé." },
+                    { speaker: "Waiter", en: "Sure! Please follow me. Here is the menu.", vi: "Chắc chắn rồi! Vui lòng đi theo tôi. Đây là thực đơn ạ." },
+                    { speaker: "Minh", en: "Thank you! I am really hungry now.", vi: "Cảm ơn bạn! Bây giờ tôi đang rất đói bụng." },
+                    { speaker: "Waiter", en: "Are you ready to order?", vi: "Quý khách đã sẵn sàng gọi món chưa ạ?" },
+                    { speaker: "Alex", en: "Yes. I would like a beef steak and some salad, please.", vi: "Rồi. Vui lòng cho tôi một phần bít tết bò và một ít sa-lát." },
+                    { speaker: "Waiter", en: "How about you, sir?", vi: "Còn quý khách thì sao ạ?" },
+                    { speaker: "Minh", en: "I would like some chicken soup and fried rice.", vi: "Tôi muốn gọi một ít súp gà và cơm chiên." },
+                    { speaker: "Waiter", en: "Would you like anything to drink?", vi: "Quý khách có muốn gọi đồ uống gì không ạ?" },
+                    { speaker: "Alex", en: "A glass of orange juice for me, please.", vi: "Cho tôi một ly nước cam nhé." },
+                    { speaker: "Minh", en: "And I would like a bottle of water.", vi: "Và tôi muốn một chai nước lọc." },
+                    { speaker: "Waiter", en: "Would you like anything else?", vi: "Quý khách có dùng thêm gì khác nữa không ạ?" },
+                    { speaker: "Alex", en: "No, thank you. That is all.", vi: "Không, cảm ơn bạn. Vậy là đủ rồi." },
+                    { speaker: "Waiter", en: "Please wait a moment.", vi: "Quý khách vui lòng đợi một lát nhé." },
+                    { speaker: "Minh", en: "Wow, the food is here! Let's eat.", vi: "Chà, đồ ăn ra rồi đây! Chúng ta ăn thôi." },
+                    { speaker: "Alex", en: "This beef steak is really delicious!", vi: "Món bít tết bò này thật sự rất ngon!" },
+                    { speaker: "Minh", en: "The chicken soup is great, too. I am so full now.", vi: "Món súp gà cũng tuyệt lắm. Bây giờ tôi no quá rồi." },
+                    { speaker: "Alex", en: "Would you like some ice cream for dessert?", vi: "Bạn có muốn ăn một chút kem cho bữa tráng miệng không?" },
+                    { speaker: "Minh", en: "No, thank you. Excuse me, can we have the bill, please?", vi: "Không, cảm ơn nhé. Xin lỗi (nhân viên), cho chúng tôi xin hóa đơn thanh toán nhé?" }
+                ],
+                exercises: {
+                    quiz: [
+                        {
+                            q: "Khi vào nhà hàng và muốn lấy bàn cho 2 người, bạn nói câu nào tự nhiên nhất?",
+                            options: [
+                                "Two people sit on table, please.",
+                                "A table for two, please.",
+                                "We have two tables, please.",
+                                "Give me two chairs, please."
+                            ],
+                            answer: 1
+                        },
+                        {
+                            q: "Cụm từ nào dùng để gọi món một cách lịch sự trong nhà hàng?",
+                            options: ["I would like...", "I do...", "I am...", "I must..."],
+                            answer: 0
+                        },
+                        {
+                            q: "Khi muốn gọi nhân viên tính tiền, ta nói câu nào chuẩn nhất?",
+                            options: [
+                                "Here is the menu, please.",
+                                "Are you ready to order?",
+                                "Excuse me, can we have the bill, please?",
+                                "Would you like anything else?"
+                            ],
+                            answer: 2
+                        },
+                        {
+                            q: "Từ 'delicious' trong câu 'This beef steak is really delicious!' có nghĩa là gì?",
+                            options: ["Đói bụng", "No bụng", "Ngon miệng", "Tráng miệng"],
+                            answer: 2
+                        }
+                    ],
+                    fill: [
+                        {
+                            sentence: "Are you ___ to order?",
+                            hint: "sẵn sàng",
+                            answer: "ready"
+                        },
+                        {
+                            sentence: "I would like some chicken soup and ___ rice.",
+                            hint: "chiên / rán",
+                            answer: "fried"
+                        },
+                        {
+                            sentence: "A ___ of orange juice for me, please.",
+                            hint: "cái ly / cốc",
+                            answer: "glass"
+                        },
+                        {
+                            sentence: "Would you like some ice cream for ___?",
+                            hint: "món tráng miệng",
+                            answer: "dessert"
+                        }
+                    ],
+                    reorder: [
+                        {
+                            vi: "Quý khách đã sẵn sàng gọi món chưa?",
+                            words: ["order?", "ready", "you", "to", "Are"],
+                            answer: "Are you ready to order?"
+                        },
+                        {
+                            vi: "Tôi muốn một chai nước lọc.",
+                            words: ["water.", "like", "bottle", "I", "a", "of", "would"],
+                            answer: "I would like a bottle of water."
+                        },
+                        {
+                            vi: "Món bít tết bò này thật sự rất ngon!",
+                            words: ["delicious!", "steak", "really", "This", "is", "beef"],
+                            answer: "This beef steak is really delicious!"
+                        },
+                        {
+                            vi: "Cho chúng tôi xin hóa đơn thanh toán nhé?",
+                            words: ["please?", "have", "we", "bill,", "Can", "the"],
+                            answer: "Can we have the bill, please?"
+                        }
+                    ]
+                }
+            }
+            // --- KẾT THÚC TOPIC 5 ---
+            // --- BẮT ĐẦU TOPIC 6 ---
+            ,{
+                id: 6,
+                title: "Topic 6: Mua sắm & Giá cả (Shopping & Prices)",
+                vocab: [
+                    { word: "help", ipa: "/help/", type: "v/n", meaning: "giúp đỡ" },
+                    { word: "look for", ipa: "/lʊk fɔːr/", type: "phr.v", meaning: "tìm kiếm" },
+                    { word: "shirt", ipa: "/ʃɜːt/", type: "n", meaning: "áo sơ mi" },
+                    { word: "jacket", ipa: "/ˈdʒæk.ɪt/", type: "n", meaning: "áo khoác" },
+                    { word: "color", ipa: "/ˈkʌl.ər/", type: "n", meaning: "màu sắc" },
+                    { word: "blue", ipa: "/bluː/", type: "adj/n", meaning: "màu xanh dương" },
+                    { word: "black", ipa: "/blæk/", type: "adj/n", meaning: "màu đen" },
+                    { word: "white", ipa: "/waɪt/", type: "adj/n", meaning: "màu trắng" },
+                    { word: "size", ipa: "/saɪz/", type: "n", meaning: "kích cỡ (size)" },
+                    { word: "wear", ipa: "/weər/", type: "v", meaning: "mặc, đội, đeo" },
+                    { word: "medium", ipa: "/ˈmiː.di.əm/", type: "adj/n", meaning: "cỡ vừa (size M)" },
+                    { word: "large", ipa: "/lɑːdʒ/", type: "adj/n", meaning: "cỡ lớn (size L)" },
+                    { word: "try on", ipa: "/traɪ ɒn/", type: "phr.v", meaning: "mặc thử (quần áo)" },
+                    { word: "fitting room", ipa: "/ˈfɪt.ɪŋ ruːm/", type: "n", meaning: "phòng thử đồ" },
+                    { word: "over there", ipa: "/ˈəʊ.vər ðeər/", type: "phrase", meaning: "ở đằng kia" },
+                    { word: "fit", ipa: "/fɪt/", type: "v", meaning: "vừa vặn" },
+                    { word: "how much", ipa: "/haʊ mʌtʃ/", type: "phrase", meaning: "giá bao nhiêu" },
+                    { word: "dollar", ipa: "/ˈdɒl.ər/", type: "n", meaning: "đô-la ($)" },
+                    { word: "expensive", ipa: "/ɪkˈspen.sɪv/", type: "adj", meaning: "đắt tiền" },
+                    { word: "cheap", ipa: "/tʃiːp/", type: "adj", meaning: "rẻ" },
+                    { word: "on sale", ipa: "/ɒn seɪl/", type: "phrase", meaning: "đang giảm giá / khuyến mãi" },
+                    { word: "today", ipa: "/təˈdeɪ/", type: "adv/n", meaning: "hôm nay" },
+                    { word: "discount", ipa: "/ˈdɪs.kaʊnt/", type: "n", meaning: "sự giảm giá, chiết khấu" },
+                    { word: "only", ipa: "/ˈəʊn.li/", type: "adv", meaning: "chỉ (có)" },
+                    { word: "fifteen", ipa: "/ˌfɪfˈtiːn/", type: "num", meaning: "mười lăm (15)" },
+                    { word: "forty", ipa: "/ˈfɔː.ti/", type: "num", meaning: "bốn mươi (40)" },
+                    { word: "buy", ipa: "/baɪ/", type: "v", meaning: "mua" },
+                    { word: "these", ipa: "/ðiːz/", type: "det/pron", meaning: "những cái này" },
+                    { word: "shoes", ipa: "/ʃuːz/", type: "n", meaning: "đôi giày" },
+                    { word: "pay", ipa: "/peɪ/", type: "v", meaning: "thanh toán, trả tiền" },
+                    { word: "cash", ipa: "/kæʃ/", type: "n", meaning: "tiền mặt" },
+                    { word: "credit card", ipa: "/ˈkred.ɪt kɑːd/", type: "n", meaning: "thẻ tín dụng" },
+                    { word: "Seller", ipa: "/ˈsel.ər/", type: "n", meaning: "người bán hàng" }
+                ],
+                grammar: [
+                    {
+                        title: "1. Cách hỏi và trả lời Giá cả (Asking about Prices)",
+                        usage: "Dùng 'How much' với động từ To Be (is/are) để hỏi giá của một hoặc nhiều món đồ.",
+                        formula: [
+                            "(?) How much + is + this / that + [Danh từ số ít]? -> It is + [Giá tiền].",
+                            "(?) How much + are + these / those + [Danh từ số nhiều]? -> They are + [Giá tiền]."
+                        ],
+                        note: "Với đồ vật có 2 chiếc đi theo cặp như 'shoes' (đôi giày), 'jeans' (quần bò), luôn chia ở dạng số nhiều (are these / they are).",
+                        examples: [
+                            { en: "How much is this blue shirt?", vi: "Chiếc áo sơ mi màu xanh này giá bao nhiêu?" },
+                            { en: "How much are these black shoes?", vi: "Đôi giày màu đen này giá bao nhiêu?" }
+                        ]
+                    },
+                    {
+                        title: "2. Đại từ chỉ định: THIS / THAT / THESE / THOSE",
+                        usage: "Dùng để chỉ trỏ vào món đồ ở gần hoặc ở xa người nói khi đi mua sắm.",
+                        formula: [
+                            "Ở gần (Đây/Này): THIS + N(số ít) | THESE + N(số nhiều)",
+                            "Ở xa (Kia/Đó): THAT + N(số ít) | THOSE + N(số nhiều)",
+                            "Dùng 'one' để thay thế danh từ số ít tránh lặp từ: this one (cái này), that one (cái kia)"
+                        ],
+                        note: "Ví dụ: Thay vì nói 'this shirt' lần 2, người bản xứ nói 'this one'.",
+                        examples: [
+                            { en: "This jacket is too expensive. How about that one?", vi: "Chiếc áo khoác này đắt quá. Còn cái đằng kia thì sao?" }
+                        ]
+                    },
+                    {
+                        title: "3. Các cấu trúc giao tiếp thực chiến tại Cửa hàng quần áo",
+                        usage: "Từ vựng và mẫu câu phản xạ từ lúc tìm đồ, thử đồ đến lúc chốt mua và thanh toán.",
+                        formula: [
+                            "Tìm đồ: I am looking for + a/some + [Món đồ].",
+                            "Mặc thử: Can I try it on? / Can I try them on?",
+                            "Chốt lấy món đồ: I'll take it! (Số ít) / I'll take them! (Số nhiều)",
+                            "Phương thức thanh toán: pay in cash (trả tiền mặt) | pay by credit card (trả bằng thẻ)"
+                        ],
+                        note: "Trong mua sắm, người bản xứ dùng 'I will take it' (Tôi lấy cái này) phổ biến hơn 'I will buy it'.",
+                        examples: [
+                            { en: "It fits me very well. I'll take it!", vi: "Nó vừa với tôi lắm. Tôi sẽ lấy cái này!" },
+                            { en: "Can I pay by credit card?", vi: "Tôi có thể thanh toán bằng thẻ tín dụng không?" }
+                        ]
+                    }
+                ],
+                dialogue: [
+                    { speaker: "Seller", en: "Hello! Can I help you?", vi: "" },
+                    { speaker: "Alex", en: "Yes, please. I am looking for a new shirt and a jacket.", vi: "" },
+                    { speaker: "Seller", en: "What color do you like?", vi: "" },
+                    { speaker: "Alex", en: "I like blue or white for the shirt, and a black jacket.", vi: "" },
+                    { speaker: "Seller", en: "What size do you wear?", vi: "" },
+                    { speaker: "Alex", en: "I usually wear size medium.", vi: "" },
+                    { speaker: "Seller", en: "Here is a nice blue shirt and a black jacket in size medium.", vi: "" },
+                    { speaker: "Alex", en: "Thank you! Can I try them on?", vi: "" },
+                    { speaker: "Seller", en: "Sure! The fitting room is over there.", vi: "" },
+                    { speaker: "Seller", en: "Do they fit you well?", vi: "" },
+                    { speaker: "Alex", en: "The blue shirt fits me very well! How much is it?", vi: "" },
+                    { speaker: "Seller", en: "It is on sale today. It is only fifteen dollars!", vi: "" },
+                    { speaker: "Alex", en: "Wow, that is cheap! How about this black jacket?", vi: "" },
+                    { speaker: "Seller", en: "That jacket is forty dollars.", vi: "" },
+                    { speaker: "Alex", en: "Oh, forty dollars is a little expensive for me. How much are these white shoes?", vi: "" },
+                    { speaker: "Seller", en: "These shoes have a big discount today. They are twenty dollars.", vi: "" },
+                    { speaker: "Alex", en: "Great! I will take the blue shirt and these white shoes.", vi: "" },
+                    { speaker: "Seller", en: "Would you like to pay in cash or by credit card?", vi: "" },
+                    { speaker: "Alex", en: "I will pay by credit card, please. Thank you!", vi: "" }
+                ],
+                exercises: {
+                    quiz: [
+                        {
+                            q: "Khi muốn hỏi giá của 'these white shoes' (số nhiều), ta hỏi câu nào?",
+                            options: [
+                                "How many are these white shoes?",
+                                "How much is these white shoes?",
+                                "How much are these white shoes?",
+                                "What size are these white shoes?"
+                            ],
+                            answer: 2
+                        },
+                        {
+                            q: "Trong cửa hàng, khi muốn xin phép mặc thử chiếc áo, bạn nói gì?",
+                            options: [
+                                "Can I look for it?",
+                                "Can I try it on?",
+                                "Can I pay in cash?",
+                                "Do you wear size medium?"
+                            ],
+                            answer: 1
+                        },
+                        {
+                            q: "Chọn giới từ đúng: 'Would you like to pay ___ cash or ___ credit card?'",
+                            options: ["by / in", "in / by", "on / at", "with / for"],
+                            answer: 1
+                        },
+                        {
+                            q: "Cụm từ 'fitting room' trong cửa hàng quần áo có nghĩa là gì?",
+                            options: ["Quầy thu ngân", "Phòng thử đồ", "Khu vực giảm giá", "Cửa ra vào"],
+                            answer: 1
+                        }
+                    ],
+                    fill: [
+                        {
+                            sentence: "I am ___ ___ a new shirt and a jacket.",
+                            hint: "tìm kiếm (2 từ - dạng V-ing)",
+                            answer: "looking for"
+                        },
+                        {
+                            sentence: "What ___ do you wear? - I wear medium.",
+                            hint: "kích cỡ",
+                            answer: "size"
+                        },
+                        {
+                            sentence: "It is ___ ___ today. It is only fifteen dollars!",
+                            hint: "đang giảm giá / khuyến mãi (2 từ)",
+                            answer: "on sale"
+                        },
+                        {
+                            sentence: "Forty dollars is a little ___ for me.",
+                            hint: "đắt tiền",
+                            answer: "expensive"
+                        }
+                    ],
+                    reorder: [
+                        {
+                            vi: "Bạn mặc kích cỡ nào?",
+                            words: ["wear?", "size", "do", "What", "you"],
+                            answer: "What size do you wear?"
+                        },
+                        {
+                            vi: "Phòng thử đồ ở đằng kia.",
+                            words: ["there.", "room", "is", "The", "over", "fitting"],
+                            answer: "The fitting room is over there."
+                        },
+                        {
+                            vi: "Chiếc áo sơ mi màu xanh này giá bao nhiêu?",
+                            words: ["shirt?", "much", "is", "blue", "How", "this"],
+                            answer: "How much is this blue shirt?"
+                        },
+                        {
+                            vi: "Tôi sẽ thanh toán bằng thẻ tín dụng.",
+                            words: ["card.", "pay", "credit", "will", "by", "I"],
+                            answer: "I will pay by credit card."
+                        }
+                    ]
+                }
+            }
+            // --- KẾT THÚC TOPIC 6 ---
+            // --- BẮT ĐẦU TOPIC 7 ---
+            ,{
+                id: 7,
+                title: "Topic 7: Giao thông & Chỉ đường (Transportation & Directions)",
+                vocab: [
+                    { word: "station", ipa: "/ˈsteɪ.ʃən/", type: "n", meaning: "trạm, ga (tàu, xe)" },
+                    { word: "subway", ipa: "/ˈsʌb.weɪ/", type: "n", meaning: "tàu điện ngầm" },
+                    { word: "bus", ipa: "/bʌs/", type: "n", meaning: "xe buýt" },
+                    { word: "get to", ipa: "/ɡet tuː/", type: "phr.v", meaning: "đến được (nơi nào đó)" },
+                    { word: "lost", ipa: "/lɒst/", type: "adj", meaning: "lạc đường, bị mất" },
+                    { word: "excuse", ipa: "/ɪkˈskjuːz/", type: "v", meaning: "tha thứ, xin lỗi" },
+                    { word: "stranger", ipa: "/ˈstren.dʒər/", type: "n", meaning: "người lạ" },
+                    { word: "museum", ipa: "/mjuːˈziː.əm/", type: "n", meaning: "viện bảo tàng" },
+                    { word: "straight", ipa: "/streɪt/", type: "adv", meaning: "thẳng" },
+                    { word: "block", ipa: /blɒk/, type: "n", meaning: "khu nhà, dãy nhà" },
+                    { word: "turn", ipa: "/tɜːn/", type: "v", meaning: "rẽ, quay" },
+                    { word: "left", ipa: "/left/", type: "adj/adv/n", meaning: "bên trái" },
+                    { word: "right", ipa: "/raɪt/", type: "adj/adv/n", meaning: "bên phải" },
+                    { word: "corner", ipa: "/ˈkɔː.nər/", type: "n", meaning: "góc phố, góc đường" },
+                    { word: "opposite", ipa: "/ˈɒp.ə.zɪt/", type: "prep", meaning: "đối diện" },
+                    { word: "supermarket", ipa: "/ˈsuː.pəˌmɑː.kɪt/", type: "n", meaning: "siêu thị" },
+                    { word: "far", ipa: "/fɑːr/", type: "adj/adv", meaning: "xa" },
+                    { word: "walk", ipa: "/wɔːk/", type: "v", meaning: "đi bộ" },
+                    { word: "minute", ipa: "/ˈmɪn.ɪt/", type: "n", meaning: "phút" },
+                    { word: "traffic", ipa: "/ˈtræf.ɪk/", type: "n", meaning: "giao thông, xe cộ" },
+                    { word: "light", ipa: "/laɪt/", type: "n", meaning: "đèn giao thông" },
+                    { word: "cross", ipa: "/krɒs/", type: "v", meaning: " băng qua, qua đường" },
+                    { word: "street", ipa: "/striːt/", type: "n", meaning: "đường phố" },
+                    { word: "taxi", ipa: "/ˈtæk.si/", type: "n", meaning: "xe tắc-xi" },
+                    { word: "fast", ipa: "/fɑːst/", type: "adj/adv", meaning: "nhanh" },
+                    { word: "convenient", ipa: "/kənˈviː.ni.ənt/", type: "adj", meaning: "tiện lợi, thuận tiện" },
+                    { word: "ticket", ipa: "/ˈtɪk.ɪt/", type: "n", meaning: "vé" },
+                    { word: "platform", ipa: "/ˈplæt.fɔːm/", type: "n", meaning: "sân ga, thềm nhà ga" },
+                    { word: "arrive", ipa: "/əˈraɪv/", type: "v", meaning: "đến nơi" },
+                    { word: "safe", ipa: "/seɪf/", type: "adj", meaning: "an toàn" }
+                ],
+                grammar: [
+                    {
+                        title: "1. Cách hỏi đường & phương hướng (Asking for Directions)",
+                        usage: "Dùng để hỏi vị trí của một địa điểm hoặc cách di chuyển đến đó.",
+                        formula: [
+                            "(?) Where is + [Tên địa điểm]?",
+                            "(?) How can I get to + [Tên địa điểm]?"
+                        ],
+                        note: "Mở đầu câu hỏi đường luôn dùng 'Excuse me' để tạo sự lịch sự với người lạ.",
+                        examples: [
+                            { en: "Excuse me, where is the nearest subway station?", vi: "Xin lỗi, trạm tàu điện ngầm gần nhất ở đâu vậy?" },
+                            { en: "How can I get to the city museum?", vi: "Làm thế nào tôi có thể đến bảo tàng thành phố?" }
+                        ]
+                    },
+                    {
+                        title: "2. Động từ mệnh lệnh chỉ đường (Imperatives for Directions)",
+                        usage: "Dùng động từ nguyên mẫu ở đầu câu để đưa ra hướng dẫn di chuyển rõ ràng.",
+                        formula: [
+                            "Go straight ahead: Đi thẳng về phía trước",
+                            "Turn left / Turn right: Rẽ trái / Rẽ phải",
+                            "Cross the street: Băng qua đường"
+                        ],
+                        note: "Khi chỉ đường, câu mệnh lệnh không cần chủ ngữ (S) đứng đầu mà bắt đầu trực tiếp bằng động từ.",
+                        examples: [
+                            { en: "Go straight for two blocks, then turn left.", vi: "Đi thẳng qua hai dãy nhà, sau đó rẽ trái." }
+                        ]
+                    },
+                    {
+                        title: "3. Giới từ chỉ vị trí địa điểm (Prepositions of Place)",
+                        usage: "Xác định vị trí tương đối giữa các công trình trên đường phố.",
+                        formula: [
+                            "next to: ở bên cạnh",
+                            "opposite: ở đối diện",
+                            "on the corner: ở góc đường"
+                        ],
+                        note: "Ví dụ: 'The supermarket is opposite the museum' (Siêu thị nằm đối diện bảo tàng).",
+                        examples: [
+                            { en: "The museum is on the corner, opposite the big supermarket.", vi: "Bảo tàng nằm ở góc đường, đối diện siêu thị lớn." }
+                        ]
+                    }
+                ],
+                dialogue: [
+                    { speaker: "Alex", en: "Excuse me, I am looking for the city museum. Can you help me?", vi: "" },
+                    { speaker: "Stranger", en: "Sure. You are not far from it. You can walk there.", vi: "" },
+                    { speaker: "Alex", en: "How can I get there?", vi: "" },
+                    { speaker: "Stranger", en: "Go straight ahead for two blocks, then turn left at the traffic lights.", vi: "" },
+                    { speaker: "Alex", en: "Left at the traffic lights, right?", vi: "" },
+                    { speaker: "Stranger", en: "Yes. After you turn left, walk for five minutes.", vi: "" },
+                    { speaker: "Alex", en: "Is the museum on the right or on the left?", vi: "" },
+                    { speaker: "Stranger", en: "It is on the right, opposite a large supermarket.", vi: "" },
+                    { speaker: "Alex", en: "Thank you very much!", vi: "" },
+                    { speaker: "Stranger", en: "You're welcome. Have a nice day!", vi: "" },
+                    { speaker: "Alex", en: "By the way, is it fast to take a subway to the central station?", vi: "" },
+                    { speaker: "Stranger", en: "Yes, the subway is very fast and convenient.", vi: "" },
+                    { speaker: "Alex", en: "Where is the subway station from here?", vi: "" },
+                    { speaker: "Stranger", en: "It is on the corner of this street, next to the bank.", vi: "" },
+                    { speaker: "Alex", en: "Great! I will buy a ticket and take the subway later.", vi: "" },
+                    { speaker: "Stranger", en: "Make sure you check the platform before you board.", vi: "" },
+                    { speaker: "Alex", en: "I will. Thanks again for your directions!", vi: "" }
+                ],
+                exercises: {
+                    quiz: [
+                        {
+                            q: "Khi muốn hỏi đường một cách lịch sự với người lạ, ta nên bắt đầu bằng từ nào?",
+                            options: ["Hello", "Excuse me", "Sorry", "Thank you"],
+                            answer: 1
+                        },
+                        {
+                            q: "Cụm từ 'Go straight ahead' có nghĩa là gì?",
+                            options: ["Rẽ trái đi ngay", "Đi thẳng về phía trước", "Băng qua đường lớn", "Quay lại phía sau"],
+                            answer: 1
+                        },
+                        {
+                            q: "Chọn giới từ đúng trong câu: 'The museum is ___ the big supermarket.' (đối diện)",
+                            options: ["next to", "opposite", "on", "in"],
+                            answer: 1
+                        },
+                        {
+                            q: "Từ nào mang nghĩa là 'tàu điện ngầm'?",
+                            options: ["subway", "bus", "taxi", "station"],
+                            answer: 0
+                        }
+                    ],
+                    fill: [
+                        {
+                            sentence: "Excuse me, I am ___ for the city museum.",
+                            hint: "tìm kiếm (dạng V-ing)",
+                            answer: "looking"
+                        },
+                        {
+                            sentence: "Go straight ahead for two blocks, then turn ___.",
+                            hint: "bên trái",
+                            answer: "left"
+                        },
+                        {
+                            sentence: "The subway is very fast and ___.",
+                            hint: "tiện lợi, thuận tiện",
+                            answer: "convenient"
+                        },
+                        {
+                            sentence: "It is on the corner of this street, ___ to the bank.",
+                            hint: "ở bên cạnh",
+                            answer: "next"
+                        }
+                    ],
+                    reorder: [
+                        {
+                            vi: "Làm thế nào tôi có thể đến bảo tàng?",
+                            words: ["museum?", "get", "to", "the", "can", "How", "I"],
+                            answer: "How can I get to the museum?"
+                        },
+                        {
+                            vi: "Đi thẳng qua hai dãy nhà.",
+                            words: ["blocks.", "straight", "for", "two", "Go"],
+                            answer: "Go straight for two blocks."
+                        },
+                        {
+                            vi: "Bảo tàng nằm đối diện siêu thị lớn.",
+                            words: ["supermarket.", "large", "a", "is", "opposite", "The", "museum"],
+                            answer: "The museum is opposite a large supermarket."
+                        },
+                        {
+                            vi: "Cảm ơn bạn rất nhiều vì đã chỉ đường!",
+                            words: ["directions!", "for", "Thanks", "your", "again"],
+                            answer: "Thanks again for your directions!"
+                        }
+                    ]
+                }
+            }
+            // --- KẾT THÚC TOPIC 7 ---
+
+        ];
+        // ============================================================================
+        // KẾT THÚC ĐIỂM DÁN TÀI LIỆU
+        // ============================================================================
+
+        let currentTopicIndex = 0;
+        let currentTab = 'vocab';
+        let reorderState = {};
+
+        // Khởi tạo danh sách 40 Topic trên Dropdown
+        function initApp() {
+            const select = document.getElementById('topicSelect');
+            select.innerHTML = '';
+            
+            for (let i = 1; i <= 40; i++) {
+                const foundTopic = TOPICS_DATA.find(t => t.id === i);
+                const option = document.createElement('option');
+                option.value = i;
+                if (foundTopic) {
+                    option.textContent = foundTopic.title;
+                } else {
+                    option.textContent = `Topic ${i}: (Chưa nạp dữ liệu)`;
+                    option.disabled = true;
+                }
+                select.appendChild(option);
+            }
+            loadTopic(1);
+        }
+
+        // Phát âm tiếng Anh chuẩn
+        function speakText(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.9;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        // Chuyển bài học
+        function loadTopic(id) {
+            const index = TOPICS_DATA.findIndex(t => t.id == id);
+            if (index !== -1) {
+                currentTopicIndex = index;
+                reorderState = {};
+                renderContent();
+            }
+        }
+
+        // Chuyển Tab
+        function switchTab(tabName) {
+            currentTab = tabName;
+            ['vocab', 'grammar', 'dialogue', 'practice'].forEach(t => {
+                const btn = document.getElementById(`tab-${t}`);
+                if (t === tabName) {
+                    btn.classList.add('tab-active');
+                } else {
+                    btn.classList.remove('tab-active');
+                }
+            });
+            renderContent();
+        }
+
+        // Hiển thị nội dung chính
+        function renderContent() {
+            const topic = TOPICS_DATA[currentTopicIndex];
+            const container = document.getElementById('contentArea');
+            container.scrollTop = 0;
+
+            if (currentTab === 'vocab') {
+                container.innerHTML = renderVocab(topic.vocab);
+            } else if (currentTab === 'grammar') {
+                container.innerHTML = renderGrammar(topic.grammar);
+            } else if (currentTab === 'dialogue') {
+                container.innerHTML = renderDialogue(topic.dialogue);
+            } else if (currentTab === 'practice') {
+                container.innerHTML = renderPractice(topic.exercises);
+            }
+        }
+
+        // 1. Render Từ Vựng (4 cột chuẩn)
+        function renderVocab(vocabList) {
+            let rows = vocabList.map((v, idx) => `
+                <tr class="border-b border-slate-100 hover:bg-blue-50/50 transition">
+                    <td class="py-2.5 px-3 font-semibold text-blue-700 cursor-pointer flex items-center gap-2" onclick="speakText('${v.word.replace(/'/g, "\\'")}')">
+                        <span class="text-xs bg-blue-100 text-blue-600 px-1.5 py-0.5 rounded">🔊</span>
+                        <span class="text-sm sm:text-base">${v.word}</span>
+                    </td>
+                    <td class="py-2.5 px-3 text-slate-500 font-mono text-xs sm:text-sm">${v.ipa}</td>
+                    <td class="py-2.5 px-3"><span class="bg-slate-100 text-slate-600 text-xs px-2 py-0.5 rounded font-medium">${v.type}</span></td>
+                    <td class="py-2.5 px-3 text-slate-800 text-sm sm:text-base font-medium">${v.meaning}</td>
+                </tr>
+            `).join('');
+
+            return `
+                <div class="mb-3 flex items-center justify-between">
+                    <h2 class="text-base sm:text-lg font-bold text-slate-800">Danh sách Từ vựng (${vocabList.length} từ)</h2>
+                    <span class="text-xs text-slate-500">💡 Chạm vào từ để nghe phát âm</span>
+                </div>
+                <div class="overflow-x-auto border border-slate-200 rounded-lg">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-100 text-slate-700 text-xs sm:text-sm uppercase border-b border-slate-200">
+                                <th class="py-2.5 px-3">Từ vựng</th>
+                                <th class="py-2.5 px-3">IPA</th>
+                                <th class="py-2.5 px-3">Từ loại</th>
+                                <th class="py-2.5 px-3">Nghĩa</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // 2. Render Ngữ Pháp (Tô điểm nhấn công thức)
+        function renderGrammar(grammarList) {
+            return grammarList.map(g => `
+                <div class="mb-5 last:mb-0 border border-slate-200 rounded-xl p-4 bg-slate-50/50">
+                    <h3 class="text-base sm:text-lg font-bold text-blue-700 mb-1.5">${g.title}</h3>
+                    <p class="text-xs sm:text-sm text-slate-600 mb-3">${g.usage}</p>
+                    
+                    <!-- Khung tô điểm nhấn công thức -->
+                    <div class="bg-amber-50 border-l-4 border-amber-500 p-3 rounded-r-lg mb-3">
+                        <div class="text-xs font-bold text-amber-800 uppercase mb-1">📌 Công thức trọng tâm:</div>
+                        ${g.formula.map(f => `<div class="font-mono font-bold text-sm sm:text-base text-rose-600 py-0.5">${f}</div>`).join('')}
+                        ${g.note ? `<div class="text-xs text-slate-600 mt-1.5 pt-1.5 border-t border-amber-200/60">💡 <b>Lưu ý:</b> ${g.note}</div>` : ''}
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="text-xs font-semibold text-slate-500 uppercase">Ví dụ thực tế:</div>
+                        ${g.examples.map(ex => `
+                            <div class="bg-white p-2.5 rounded-lg border border-slate-200 text-sm flex items-start justify-between gap-2">
+                                <div>
+                                    <div class="font-semibold text-slate-800">${ex.en}</div>
+                                    <div class="text-slate-500 text-xs sm:text-sm">${ex.vi}</div>
+                                </div>
+                                <button onclick="speakText('${ex.en.replace(/'/g, "\\'")}')" class="text-blue-600 hover:bg-blue-50 p-1.5 rounded text-xs shrink-0">🔊</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 3. Render Hội Thoại
+        function renderDialogue(dialogueList) {
+            let lines = dialogueList.map((d, idx) => {
+                const isFirstSpeaker = idx === 0 || d.speaker === dialogueList[0].speaker;
+                return `
+                    <div class="flex flex-col ${isFirstSpeaker ? 'items-start' : 'items-end'}">
+                        <span class="text-xs font-bold text-slate-400 mb-1 px-1">${d.speaker}</span>
+                        <div class="max-w-[90%] sm:max-w-[80%] rounded-2xl px-4 py-2.5 border ${isFirstSpeaker ? 'bg-slate-50 border-slate-200 rounded-tl-none' : 'bg-blue-50 border-blue-200 rounded-tr-none'}">
+                            <div class="flex items-center justify-between gap-3">
+                                <span class="font-semibold text-slate-800 text-sm sm:text-base">${d.en}</span>
+                                <button onclick="speakText('${d.en.replace(/'/g, "\\'")}')" class="text-blue-600 hover:bg-blue-100 p-1 rounded text-xs shrink-0">🔊</button>
+                            </div>
+                            <div class="text-xs sm:text-sm text-slate-500 mt-1">${d.vi}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="mb-4 flex items-center justify-between border-b border-slate-100 pb-2.5">
+                    <div>
+                        <h2 class="text-base sm:text-lg font-bold text-slate-800">Hội thoại giao tiếp (${dialogueList.length} câu)</h2>
+                        <p class="text-xs text-slate-500">Bấm vào loa từng câu để luyện nghe và nhại lại (Shadowing)</p>
+                    </div>
+                </div>
+                <div class="space-y-3 pb-2">${lines}</div>
+            `;
+        }
+
+        // 4. Render Bài Tập Tương Tác (3 dạng bài tập)
+        function renderPractice(ex) {
+            // Dạng 1: Trắc nghiệm
+            let quizHtml = ex.quiz.map((q, qIdx) => `
+                <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200">
+                    <div class="font-semibold text-sm sm:text-base mb-2.5">${qIdx + 1}. ${q.q}</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        ${q.options.map((opt, oIdx) => `
+                            <button onclick="checkQuiz(${qIdx},${oIdx}, ${q.answer}, this)" class="quiz-btn-${qIdx} text-left text-xs sm:text-sm p-2.5 rounded-lg border border-slate-300 bg-white hover:bg-blue-50 transition font-medium">
+                                ${opt}
+                            </button>
+                        `).join('')}
+                    </div>
+                    <div id="quiz-msg-${qIdx}" class="text-xs font-bold mt-2 hidden"></div>
+                </div>
+            `).join('');
+
+            // Dạng 2: Điền từ vào câu giao tiếp
+            let fillHtml = ex.fill.map((f, fIdx) => `
+                <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200">
+                    <div class="text-sm sm:text-base font-medium mb-2">
+                        <span class="font-bold">${fIdx + 1}.</span> ${f.sentence} 
+                        <span class="text-xs text-blue-600 bg-blue-50 px-2 py-0.5 rounded ml-1">(Gợi ý: ${f.hint})</span>
+                    </div>
+                    <div class="flex gap-2">
+                        <input type="text" id="fill-input-${fIdx}" placeholder="Nhập từ tiếng Anh..." class="flex-1 text-sm border border-slate-300 rounded-lg px-3 py-1.5 outline-none focus:border-blue-500">
+                        <button onclick="checkFill(${fIdx}, '${f.answer.replace(/'/g, "\\'")}')" class="bg-blue-600 hover:bg-blue-700 text-white text-xs sm:text-sm font-semibold px-4 py-1.5 rounded-lg transition">Kiểm tra</button>
+                    </div>
+                    <div id="fill-msg-${fIdx}" class="text-xs font-bold mt-2 hidden"></div>
+                </div>
+            `).join('');
+
+            // Dạng 3: Sắp xếp câu phản xạ giao tiếp
+            let reorderHtml = ex.reorder.map((r, rIdx) => {
+                if (!reorderState[rIdx]) reorderState[rIdx] = [];
+                return `
+                    <div class="p-3.5 bg-slate-50 rounded-lg border border-slate-200">
+                        <div class="text-xs sm:text-sm text-slate-500 mb-1">Dịch và ghép thành câu hoàn chỉnh:</div>
+                        <div class="font-semibold text-sm sm:text-base text-slate-800 mb-2.5">"${r.vi}"</div>
+                        
+                        <!-- Khung chứa câu đã chọn -->
+                        <div id="reorder-box-${rIdx}" class="min-h-[42px] bg-white border border-dashed border-slate-300 rounded-lg p-2 mb-2.5 flex flex-wrap gap-1.5 items-center text-sm font-semibold text-blue-700">
+                            <span class="text-xs text-slate-400 font-normal">Chạm vào các từ bên dưới để ghép câu...</span>
+                        </div>
+
+                        <!-- Các từ để chọn -->
+                        <div class="flex flex-wrap gap-1.5 mb-2.5">
+                            ${r.words.map((w) => `
+                                <button onclick="addWordReorder(${rIdx}, '${w.replace(/'/g, "\\'")}', '${r.answer.replace(/'/g, "\\'")}')" class="bg-white border border-slate-300 hover:border-blue-500 text-slate-700 text-xs sm:text-sm font-medium px-2.5 py-1 rounded shadow-2xs transition">
+                                    ${w}
+                                </button>
+                            `).join('')}
+                            <button onclick="resetReorder(${rIdx})" class="text-xs text-rose-600 hover:underline ml-auto px-2 py-1">🔄 Làm lại</button>
+                        </div>
+                        <div id="reorder-msg-${rIdx}" class="text-xs font-bold hidden"></div>
+                    </div>
+                `;
+            }).join('');
+
+            return `
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-sm sm:text-base font-bold text-blue-700 uppercase tracking-wide mb-3">Phần A: Trắc nghiệm Từ vựng & Phản xạ</h3>
+                        <div class="space-y-3">${quizHtml}</div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-bold text-blue-700 uppercase tracking-wide mb-3">Phần B: Điền từ vào ngữ cảnh</h3>
+                        <div class="space-y-3">${fillHtml}</div>
+                    </div>
+                    <div>
+                        <h3 class="text-sm sm:text-base font-bold text-blue-700 uppercase tracking-wide mb-3">Phần C: Ghép câu giao tiếp thực tế</h3>
+                        <div class="space-y-3">${reorderHtml}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Logic chấm điểm Trắc nghiệm
+        function checkQuiz(qIdx, selectedIdx, correctIdx, btnElement) {
+            const buttons = document.querySelectorAll(`.quiz-btn-${qIdx}`);
+            const msg = document.getElementById(`quiz-msg-${qIdx}`);
+            buttons.forEach(b => b.classList.remove('bg-emerald-100', 'border-emerald-500', 'bg-rose-100', 'border-rose-500'));
+            
+            msg.classList.remove('hidden');
+            if (selectedIdx === correctIdx) {
+                btnElement.classList.add('bg-emerald-100', 'border-emerald-500');
+                msg.textContent = "🎉 Chính xác!";
+                msg.className = "text-xs font-bold mt-2 text-emerald-600";
+            } else {
+                btnElement.classList.add('bg-rose-100', 'border-rose-500');
+                msg.textContent = "❌ Chưa đúng, hãy thử lại nhé!";
+                msg.className = "text-xs font-bold mt-2 text-rose-600";
+            }
+        }
+
+        // Logic chấm điểm Điền từ
+        function checkFill(fIdx, correctAnswer) {
+            const input = document.getElementById(`fill-input-${fIdx}`).value.trim().toLowerCase();
+            const msg = document.getElementById(`fill-msg-${fIdx}`);
+            msg.classList.remove('hidden');
+
+            if (input === correctAnswer.toLowerCase()) {
+                msg.textContent = `🎉 Tuyệt vời! Đáp án chuẩn: "${correctAnswer}"`;
+                msg.className = "text-xs font-bold mt-2 text-emerald-600";
+                speakText(correctAnswer);
+            } else {
+                msg.textContent = `❌ Chưa chính xác. Hãy kiểm tra lại chính tả nhé!`;
+                msg.className = "text-xs font-bold mt-2 text-rose-600";
+            }
+        }
+
+        // Logic Ghép câu
+        function addWordReorder(rIdx, word, correctAnswer) {
+            if (!reorderState[rIdx]) reorderState[rIdx] = [];
+            reorderState[rIdx].push(word);
+            
+            const box = document.getElementById(`reorder-box-${rIdx}`);
+            const currentSentence = reorderState[rIdx].join(' ');
+            box.innerHTML = reorderState[rIdx].map(w => `<span class="bg-blue-100 text-blue-800 px-2 py-0.5 rounded">${w}</span>`).join(' ');
+
+            const msg = document.getElementById(`reorder-msg-${rIdx}`);
+            if (currentSentence === correctAnswer) {
+                msg.classList.remove('hidden');
+                msg.textContent = "🎉 Chuẩn xác! Bạn đã ghép đúng câu giao tiếp.";
+                msg.className = "text-xs font-bold text-emerald-600";
+                speakText(correctAnswer);
+            } else if (reorderState[rIdx].length >= correctAnswer.split(' ').length) {
+                msg.classList.remove('hidden');
+                msg.textContent = "❌ Thứ tự từ chưa đúng, hãy bấm 'Làm lại' nhé!";
+                msg.className = "text-xs font-bold text-rose-600";
+            }
+        }
+
+        function resetReorder(rIdx) {
+            reorderState[rIdx] = [];
+            document.getElementById(`reorder-box-${rIdx}`).innerHTML = `<span class="text-xs text-slate-400 font-normal">Chạm vào các từ bên dưới để ghép câu...</span>`;
+            document.getElementById(`reorder-msg-${rIdx}`).classList.add('hidden');
+        }
+
+        window.onload = initApp;
+    </script>
+</body>
+</html>
